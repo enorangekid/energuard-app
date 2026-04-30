@@ -100,7 +100,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .product-info{padding:12px;}
 .product-name{font-size:12px;font-weight:700;color:var(--text);line-height:1.4;margin-bottom:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .product-tagline{font-size:10px;font-weight:500;color:var(--primary);opacity:0.75;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.product-spec{font-size:10px;color:var(--text-muted);margin-bottom:6px;}
+.product-spec{font-size:8px;color:var(--text-muted);margin-bottom:6px;}
 .product-price{font-size:14px;font-weight:800;color:var(--primary);font-family:'DM Sans',sans-serif;}
 .product-price-unit{font-size:10px;font-weight:500;color:var(--text-sub);}
 
@@ -133,7 +133,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .catalog-item-body{padding:14px;flex:1;min-width:0;}
 .catalog-item-cat{font-size:10px;font-weight:700;color:var(--primary);background:#e8f0fb;padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:6px;}
 .catalog-item-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.4;}
-.catalog-item-spec{font-size:11px;color:var(--text-muted);margin-bottom:8px;}
+.catalog-item-spec{font-size:9px;color:var(--text-muted);margin-bottom:8px;}
 .catalog-item-price{font-size:15px;font-weight:800;color:var(--primary);font-family:'DM Sans',sans-serif;}
 .catalog-item-price-unit{font-size:10px;font-weight:500;color:var(--text-sub);}
 
@@ -146,9 +146,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .modal-handle{width:36px;height:4px;background:#ddd;border-radius:2px;margin:12px auto 0;}
 /* 모달 이미지 슬라이더 */
 .modal-slider{width:100%;height:220px;position:relative;overflow:hidden;margin-top:12px;background:linear-gradient(135deg,#e8f0f8,#d0e4f7);}
-.modal-slider-track{display:flex;height:100%;transition:transform 0.35s ease;}
-.modal-slide{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.modal-slide img{width:100%;height:100%;object-fit:cover;}
+.modal-slider-track{display:flex;height:100%;transition:transform 0.35s ease;will-change:transform;}
+.modal-slide{width:100vw;min-width:100%;height:100%;flex-shrink:0;overflow:hidden;}
+.modal-slide img{width:100%;height:100%;object-fit:cover;display:block;}
 .modal-slide-placeholder{font-size:56px;opacity:.35;}
 /* 슬라이더 도트 */
 .modal-slider-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:1;}
@@ -275,7 +275,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
       <span class="header-logo-sub">친환경 단열재 전문기업</span>
     </div>
   </a>
-  <a href="tel:031-511-0377" class="header-call-btn"><i class="fa-solid fa-phone"></i></a>
+  <a href="tel:010-5163-8454" class="header-call-btn"><i class="fa-solid fa-phone"></i></a>
 </header>
 
 <!-- 홈 -->
@@ -309,8 +309,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
     </div>
   </div>
   <div class="home-section">
-    <a href="tel:031-511-0377" class="quick-contact-card">
-      <div class="qc-left"><div class="qc-title">📞 빠른 문의</div><div class="qc-sub">031-511-0377 · 평일 09:00~18:00</div></div>
+    <a href="tel:010-5163-8454" class="quick-contact-card">
+      <div class="qc-left"><div class="qc-title">📞 빠른 문의</div><div class="qc-sub">010-5163-8454 · 평일 09:00~18:00</div></div>
       <div class="qc-btn"><i class="fa-solid fa-phone"></i></div>
     </a>
   </div>
@@ -384,9 +384,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
     <div class="company-tagline">친환경 단열재 전문기업 · 따뜻하고 안전한 미래</div>
   </div>
   <div class="company-stats">
-    <div class="stat-item"><div class="stat-num">25+</div><div class="stat-label">업력(년)</div></div>
+    <div class="stat-item"><div class="stat-num">20+</div><div class="stat-label">업력(년)</div></div>
     <div class="stat-item"><div class="stat-num">1만+</div><div class="stat-label">누적 고객</div></div>
-    <div class="stat-item"><div class="stat-num">6종+</div><div class="stat-label">제품 라인업</div></div>
+    <div class="stat-item"><div class="stat-num">10종+</div><div class="stat-label">제품 라인업</div></div>
   </div>
   <div class="company-section">
     <div class="section-title">회사 정보</div>
@@ -394,15 +394,15 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
       <div class="info-row"><div class="info-icon" style="background:#e8f0fb;color:var(--primary);"><i class="fa-solid fa-building"></i></div><div class="info-content"><div class="info-label">상호명</div><div class="info-value">주식회사 에너가드컴퍼니</div></div></div>
       <div class="info-row"><div class="info-icon" style="background:#fef3e8;color:#e85d2f;"><i class="fa-solid fa-id-card"></i></div><div class="info-content"><div class="info-label">사업자등록번호</div><div class="info-value">793-87-02509</div></div></div>
       <div class="info-row"><div class="info-icon" style="background:#f0fdf4;color:#16a34a;"><i class="fa-solid fa-location-dot"></i></div><div class="info-content"><div class="info-label">주소</div><div class="info-value">경기도 포천시 가산면 오성길 146</div></div></div>
-      <div class="info-row"><div class="info-icon" style="background:#fdf4ff;color:#9333ea;"><i class="fa-solid fa-phone"></i></div><div class="info-content"><div class="info-label">전화</div><div class="info-value">031-511-0377</div></div><a href="tel:031-511-0377" class="info-action">전화하기</a></div>
-      <div class="info-row"><div class="info-icon" style="background:#fef2f2;color:#ef4444;"><i class="fa-solid fa-fax"></i></div><div class="info-content"><div class="info-label">팩스</div><div class="info-value">031-624-1646</div></div></div>
+      <div class="info-row"><div class="info-icon" style="background:#fdf4ff;color:#9333ea;"><i class="fa-solid fa-phone"></i></div><div class="info-content"><div class="info-label">전화</div><div class="info-value">010-5163-8454</div></div><a href="tel:010-5163-8454" class="info-action">전화하기</a></div>
+      <div class="info-row"><div class="info-icon" style="background:#fef2f2;color:#ef4444;"><i class="fa-solid fa-fax"></i></div><div class="info-content"><div class="info-label">팩스</div><div class="info-value">010-5163-8454</div></div></div>
       <div class="info-row"><div class="info-icon" style="background:#f0fdf4;color:#16a34a;"><i class="fa-solid fa-envelope"></i></div><div class="info-content"><div class="info-label">이메일</div><div class="info-value">mdf24t@naver.com</div></div><a href="mailto:mdf24t@naver.com" class="info-action">메일</a></div>
     </div>
     <div class="section-title" style="margin-top:8px;">위치</div>
     <div class="map-wrap" onclick="openMap()"><i class="fa-solid fa-map-location-dot"></i><span>지도에서 보기 (네이버 지도)</span></div>
     <div class="section-title">빠른 연락</div>
     <div class="contact-btns" style="margin-bottom:24px;">
-      <a href="tel:031-511-0377" class="contact-btn contact-btn-call"><i class="fa-solid fa-phone"></i> 전화 문의</a>
+      <a href="tel:010-5163-8454" class="contact-btn contact-btn-call"><i class="fa-solid fa-phone"></i> 전화 문의</a>
       <button class="contact-btn contact-btn-naver" onclick="openSmartStore()"><i class="fa-solid fa-store"></i> 스마트스토어</button>
       <a href="https://blog.naver.com/taekwonv123" target="_blank" class="contact-btn" style="background:#03C75A;color:white;"><i class="fa-solid fa-blog"></i> 공식 블로그</a>
       <a href="https://www.youtube.com/@에너가드컴퍼니" target="_blank" class="contact-btn" style="background:#FF0000;color:white;"><i class="fa-brands fa-youtube"></i> 유튜브</a>
@@ -501,7 +501,7 @@ async function loadProducts(){
 function getDummyProducts(){return[
   {id:1,name:'아이소핑크 압출법단열재',tagline:'내습·우수한 압축강도',category:'아이소핑크 압출법단열재',spec:'900×1800mm',price:55000,price_unit:'장',description:'KS 인증 압출법 단열재로, 높은 압축강도와 우수한 내습성, 자기소화성을 갖춘 고급 가등급 단열재입니다.',thickness:'10T~300T',image:'',
     specs:{category:'압출법 보온판 (XPS)', conductivity:'0.034 W/mK 이하', density:'25~35 kg/m³', fireRating:'가등급', application:'외벽·지붕·바닥·지하구조체'}},
-  {id:2,name:'비드법단열재 1종',tagline:'경량·시공성 우수',category:'비드법단열재 1종',spec:'900×1800mm',price:45000,price_unit:'장',description:'KS M ISO 3808 규격의 비드법 1종 단열재로, 뛰어난 단열성과 경량성을 바탕으로 시공성과 경제성을 모두 갖춘 제품입니다.',thickness:'10T~300T',image:'',
+  {id:2,name:'비드법단열재 1종',tagline:'경량·시공성 우수',category:'비드법단열재 1종',spec:'900×1800mm',price:45000,price_unit:'장',description:'KS M ISO 4898 규격의 비드법 1종 단열재로, 뛰어난 단열성과 경량성을 바탕으로 시공성과 경제성을 모두 갖춘 제품입니다.',thickness:'10T~300T',image:'',
     specs:{category:'비드법 보온판 1종 (EPS)', conductivity:'0.036 W/mK 이하', density:'20 kg/m³ 이상', fireRating:'가등급', application:'내외벽·지붕·바닥 단열'}},
   {id:3,name:'비드법단열재 2종',tagline:'외단열 공법 특화',category:'비드법단열재 2종',spec:'900×1800mm',price:42000,price_unit:'장',description:'흑연 등 특수 첨가제를 적용해 1종 대비 최대 20% 이상 단열 성능을 향상시킨 대표적인 가등급 단열재입니다.',thickness:'10T~300T',image:'',
     specs:{category:'비드법 보온판 2종 (EPS)', conductivity:'0.031 W/mK 이하', density:'20 kg/m³ 이상', fireRating:'가등급', application:'외단열·내외벽·지붕 단열'}},
@@ -577,9 +577,11 @@ function filterCatalog(){renderCatalog();}
 /* ── 이미지 슬라이더 ── */
 let _slideIdx = 0;
 let _slideTotal = 0;
+let _autoSlideTimer = null;
 
 function _initSlider(images) {
   _slideIdx = 0;
+  clearInterval(_autoSlideTimer);
   const track = document.getElementById('modalSliderTrack');
   const dots  = document.getElementById('sliderDots');
   const left  = document.getElementById('sliderLeft');
@@ -600,6 +602,14 @@ function _initSlider(images) {
     ).join('');
     left.style.display  = images.length > 1 ? 'flex' : 'none';
     right.style.display = images.length > 1 ? 'flex' : 'none';
+
+    // 자동 슬라이드 (3초마다)
+    if(images.length > 1) {
+      _autoSlideTimer = setInterval(() => {
+        _slideIdx = (_slideIdx + 1) % _slideTotal;
+        _updateSlider();
+      }, 3000);
+    }
   }
   _updateSlider();
 }
@@ -613,7 +623,8 @@ function slideTo(idx) {
   _updateSlider();
 }
 function _updateSlider() {
-  document.getElementById('modalSliderTrack').style.transform = `translateX(-${_slideIdx * 100}%)`;
+  const track = document.getElementById('modalSliderTrack');
+  if(track) track.style.transform = `translateX(-${_slideIdx * 100}%)`;
   document.querySelectorAll('.slider-dot').forEach((d,i) => d.classList.toggle('active', i === _slideIdx));
 }
 
@@ -632,16 +643,16 @@ async function openProduct(id){
 
   // 제품명 기준 specs 매핑 (Supabase에 specs 컬럼 없을 때 fallback)
   const SPECS_MAP = {
-    '아이소핑크 압출법단열재': {category:'압출법 보온판 (XPS)', conductivity:'0.034 W/mK 이하', density:'25~35 kg/m³', fireRating:'가등급', application:'외벽·지붕·바닥·지하구조체'},
-    '비드법단열재 1종':        {category:'비드법 보온판 1종 (EPS)', conductivity:'0.036 W/mK 이하', density:'20 kg/m³ 이상', fireRating:'가등급', application:'내외벽·지붕·바닥 단열'},
-    '비드법단열재 2종':        {category:'비드법 보온판 2종 (EPS)', conductivity:'0.031 W/mK 이하', density:'20 kg/m³ 이상', fireRating:'가등급', application:'외단열·내외벽·지붕 단열'},
-    '준불연 비드법단열재':     {category:'준불연 비드법 보온판', conductivity:'0.036 W/mK 이하', density:'20 kg/m³ 이상', fireRating:'준불연 (KS F ISO 5660)', application:'화재 안전 요구 건축물 외벽'},
-    '경질우레탄보드':          {category:'경질 폴리우레탄 보온판 (PUR)', conductivity:'0.024 W/mK 이하', density:'28~35 kg/m³', fireRating:'가등급', application:'외벽·지붕·바닥·냉동창고'},
-    '준불연 경질우레탄보드':   {category:'준불연 경질 폴리우레탄 보온판', conductivity:'0.024 W/mK 이하', density:'28~35 kg/m³', fireRating:'준불연 (KS F ISO 5660)', application:'공동주택·공공건물 외벽'},
-    '준불연 PF보드':           {category:'페놀폼 보온판 (PF)', conductivity:'0.020 W/mK 이하', density:'35~45 kg/m³', fireRating:'준불연 (KS F ISO 5660)', application:'공동주택·공공시설·고성능 외벽'},
-    '미네랄울 불연단열재':     {category:'미네랄울 보온판 (MW)', conductivity:'0.036 W/mK 이하', density:'60~100 kg/m³', fireRating:'불연 (KS F 2271)', application:'공장·물류센터·공공건물 내외벽'},
-    '열반사단열재':            {category:'열반사 단열재 (Reflective)', conductivity:'0.030 W/mK 이하', density:'-', fireRating:'가등급', application:'지붕·벽체·바닥·배관 보온'},
-    '접착식 단열벽지':         {category:'접착식 단열벽지', conductivity:'0.040 W/mK 이하', density:'-', fireRating:'준불연', application:'주거·사무실 내벽 결로 방지'},
+    '아이소핑크 압출법단열재': {category:'압출법 보온판(XPS)', conductivity:'0.027~0.028 W/mK', density:'30 kg/m³', fireRating:'자기소화성', application:'아파트·주택 내벽, 바닥 단열, 지하 구조물, 옥상, 베란다'},
+    '비드법단열재 1종':        {category:'비드법 보온판(EPS) 1종', conductivity:'0.034~0.039 W/mK', density:'17~25 kg/m³', fireRating:'자기소화성', application:'내벽 단열, 천장 단열, 바닥 보온재, 가전·식품 포장재, 아이스박스'},
+    '비드법단열재 2종':        {category:'비드법 보온판(EPS) 2종', conductivity:'0.031~0.033 W/mK', density:'17~25 kg/m³', fireRating:'자기소화성', application:'건물 내 단열, 외벽 및 옥상단열, 지붕 단열 등'},
+    '준불연 비드법단열재':     {category:'준불연 비드법 보온판', conductivity:'0.036 W/mK', density:'제조사 제시값 이상', fireRating:'준불연', application:'건축물의 지붕, 벽, 바닥 등 준불연 성능이 요구되는 부위'},
+    '경질우레탄보드':          {category:'경질 우레탄폼 보드(PUR)', conductivity:'0.024 W/mK 이하', density:'제조사 제시값 이상', fireRating:'자기소화성', application:'건축 외벽, 지붕, 샌드위치 패널, 냉장·냉동창고, 산업용 건축물'},
+    '준불연 경질우레탄보드':   {category:'준불연 경질 우레탄폼 보드', conductivity:'0.024 W/mK 이하', density:'제조사 제시값 이상', fireRating:'준불연 (KS F ISO 5660)', application:'모든 건축물의 지붕, 벽, 바닥 등 준불연 성능이 필요한 경우'},
+    '준불연 PF보드':           {category:'페놀폼 보드(PF)', conductivity:'0.020 W/mK 이하', density:'제조사 제시값 이상', fireRating:'준불연', application:'공동주택·공공시설·고성능 외벽'},
+    '미네랄울 불연단열재':     {category:'미네랄울 불연', conductivity:'0.036 W/mK 이하', density:'60~70 kg/m³', fireRating:'불연', application:'화재대비가 필요한 건축물의 구조물, 기계실, 외단열, 경계벽, 내화 벽체'},
+    '열반사단열재':            {category:'열반사 단열재', conductivity:'제조사 제시값 이하', density:'-', fireRating:'가연성', application:'지붕·벽체·바닥·배관 보온'},
+    '접착식 단열벽지':         {category:'접착식 단열벽지', conductivity:'제조사 제시값 이하', density:'-', fireRating:'가연성', application:'주거·사무실 내벽 결로 방지'},
   };
   if(!p.specs && SPECS_MAP[p.name]) p.specs = SPECS_MAP[p.name];
 
@@ -661,7 +672,6 @@ async function openProduct(id){
   // 이미지 슬라이더
   const images = [p.image_detail1, p.image_detail2, p.image_detail3].filter(Boolean);
   _initSlider(images.length ? images : (p.image_main ? [p.image_main] : []));
-  _initSlider(images);
   document.getElementById('modalPriceWrap').innerHTML='<div class="loading-wrap" style="padding:20px 0;"><i class="fa-solid fa-spinner fa-spin"></i><span>가격 불러오는 중...</span></div>';
   document.getElementById('modalSubTabs').style.display='none';
   document.getElementById('modalSubSubTabs').style.display='none';
@@ -761,7 +771,7 @@ function closeModal(e){if(e.target===document.getElementById('productModal'))clo
 function closeModalDirect(){
   document.getElementById('productModal').classList.remove('open');
   document.body.style.overflow='';
-  // 히스토리 상태 되돌리기
+  clearInterval(_autoSlideTimer);
   if(history.state && history.state.modal) history.back();
 }
 function goEstimateFromModal(){
