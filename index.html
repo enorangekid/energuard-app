@@ -127,8 +127,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .catalog-list{padding:0 20px;}
 .catalog-item{background:white;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-sm);margin-bottom:12px;overflow:hidden;cursor:pointer;display:flex;transition:transform .2s;}
 .catalog-item:active{transform:scale(.98);}
-.catalog-item-img{width:100px;flex-shrink:0;background:linear-gradient(135deg,#e8f0f8,#d0e4f7);display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.catalog-item-img img{width:100%;height:100%;object-fit:cover;}
+.catalog-item-img{width:120px;min-height:120px;align-self:stretch;flex-shrink:0;background:#f0f4f8;overflow:hidden;position:relative;}
+.catalog-item-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;}
 .catalog-item-img-placeholder{font-size:28px;opacity:.4;}
 .catalog-item-body{padding:14px;flex:1;min-width:0;}
 .catalog-item-cat{font-size:10px;font-weight:700;color:var(--primary);background:#e8f0fb;padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:6px;}
@@ -300,9 +300,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
       <div class="cat-chip" onclick="filterHomeProducts('경질우레탄보드')">경질우레탄</div>
       <div class="cat-chip" onclick="filterHomeProducts('준불연 경질우레탄보드')">준불연 우레탄</div>
       <div class="cat-chip" onclick="filterHomeProducts('준불연 PF보드')">준불연 PF</div>
-      <div class="cat-chip" onclick="filterHomeProducts('이액형 폴리우레탄폼')">폴리우레탄폼</div>
+      <div class="cat-chip" onclick="filterHomeProducts('미네랄울 불연단열재')">미네랄울</div>
       <div class="cat-chip" onclick="filterHomeProducts('열반사단열재')">열반사</div>
-      <div class="cat-chip" onclick="filterHomeProducts('친환경 단열벽지')">단열벽지</div>
+      <div class="cat-chip" onclick="filterHomeProducts('접착식 단열벽지')">단열벽지</div>
     </div>
     <div class="product-grid" id="homeProductGrid">
       <div class="loading-wrap" style="grid-column:1/-1;"><i class="fa-solid fa-spinner fa-spin"></i><span>상품 불러오는 중...</span></div>
@@ -338,9 +338,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
       <div class="cat-chip" onclick="setCatalogCat('경질우레탄보드',this)">경질우레탄</div>
       <div class="cat-chip" onclick="setCatalogCat('준불연 경질우레탄보드',this)">준불연 우레탄</div>
       <div class="cat-chip" onclick="setCatalogCat('준불연 PF보드',this)">준불연 PF</div>
-      <div class="cat-chip" onclick="setCatalogCat('이액형 폴리우레탄폼',this)">폴리우레탄폼</div>
+      <div class="cat-chip" onclick="setCatalogCat('미네랄울 불연단열재',this)">미네랄울</div>
       <div class="cat-chip" onclick="setCatalogCat('열반사단열재',this)">열반사</div>
-      <div class="cat-chip" onclick="setCatalogCat('친환경 단열벽지',this)">단열벽지</div>
+      <div class="cat-chip" onclick="setCatalogCat('접착식 단열벽지',this)">단열벽지</div>
     </div>
   </div>
   <div class="catalog-list" id="catalogList"><div class="loading-wrap"><i class="fa-solid fa-spinner fa-spin"></i><span>상품 불러오는 중...</span></div></div>
@@ -491,7 +491,7 @@ function showPage(id){
 
 async function loadProducts(){
   try{
-    const{data,error}=await sb.from('app_products').select('*').order('category');
+    const{data,error}=await sb.from('app_products').select('*').order('sort_order');
     allProducts=(!error&&data&&data.length)?data:getDummyProducts();
   }catch(e){allProducts=getDummyProducts();}
   renderHomeProducts('전체');
@@ -530,7 +530,7 @@ function renderHomeProducts(cat){
   grid.innerHTML=list.map(p=>`
     <div class="product-card" onclick="openProduct(${p.id})">
       <div class="product-img">
-        ${p.image?`<img src="${p.image}" alt="${p.name}" loading="lazy">`:`<div class="product-img-placeholder">🧱</div>`}
+        ${p.image_main?`<img src="${p.image_main}" alt="${p.name}" loading="lazy">`:`<div class="product-img-placeholder">🧱</div>`}
         <div class="product-badge">${p.category}</div>
       </div>
       <div class="product-info">
@@ -555,7 +555,7 @@ function renderCatalog(){
   if(!list.length){el.innerHTML='<div class="empty-wrap"><i class="fa-solid fa-magnifying-glass"></i><span>검색 결과가 없습니다.</span></div>';return;}
   el.innerHTML=list.map(p=>`
     <div class="catalog-item" onclick="openProduct(${p.id})">
-      <div class="catalog-item-img">${p.image?`<img src="${p.image}" alt="${p.name}" loading="lazy">`:`<div class="catalog-item-img-placeholder">🧱</div>`}</div>
+      <div class="catalog-item-img">${p.image_main?`<img src="${p.image_main}" alt="${p.name}" loading="lazy">`:`<div class="catalog-item-img-placeholder">🧱</div>`}</div>
       <div class="catalog-item-body">
         <div class="catalog-item-cat">${p.category}</div>
         <div class="catalog-item-name">${p.name}</div>
@@ -630,6 +630,21 @@ async function openProduct(id){
   document.getElementById('modalName').textContent=p.name;
   document.getElementById('modalDesc').textContent=p.description||'상세 설명이 없습니다.';
 
+  // 제품명 기준 specs 매핑 (Supabase에 specs 컬럼 없을 때 fallback)
+  const SPECS_MAP = {
+    '아이소핑크 압출법단열재': {category:'압출법 보온판 (XPS)', conductivity:'0.034 W/mK 이하', density:'25~35 kg/m³', fireRating:'가등급', application:'외벽·지붕·바닥·지하구조체'},
+    '비드법단열재 1종':        {category:'비드법 보온판 1종 (EPS)', conductivity:'0.036 W/mK 이하', density:'20 kg/m³ 이상', fireRating:'가등급', application:'내외벽·지붕·바닥 단열'},
+    '비드법단열재 2종':        {category:'비드법 보온판 2종 (EPS)', conductivity:'0.031 W/mK 이하', density:'20 kg/m³ 이상', fireRating:'가등급', application:'외단열·내외벽·지붕 단열'},
+    '준불연 비드법단열재':     {category:'준불연 비드법 보온판', conductivity:'0.036 W/mK 이하', density:'20 kg/m³ 이상', fireRating:'준불연 (KS F ISO 5660)', application:'화재 안전 요구 건축물 외벽'},
+    '경질우레탄보드':          {category:'경질 폴리우레탄 보온판 (PUR)', conductivity:'0.024 W/mK 이하', density:'28~35 kg/m³', fireRating:'가등급', application:'외벽·지붕·바닥·냉동창고'},
+    '준불연 경질우레탄보드':   {category:'준불연 경질 폴리우레탄 보온판', conductivity:'0.024 W/mK 이하', density:'28~35 kg/m³', fireRating:'준불연 (KS F ISO 5660)', application:'공동주택·공공건물 외벽'},
+    '준불연 PF보드':           {category:'페놀폼 보온판 (PF)', conductivity:'0.020 W/mK 이하', density:'35~45 kg/m³', fireRating:'준불연 (KS F ISO 5660)', application:'공동주택·공공시설·고성능 외벽'},
+    '미네랄울 불연단열재':     {category:'미네랄울 보온판 (MW)', conductivity:'0.036 W/mK 이하', density:'60~100 kg/m³', fireRating:'불연 (KS F 2271)', application:'공장·물류센터·공공건물 내외벽'},
+    '열반사단열재':            {category:'열반사 단열재 (Reflective)', conductivity:'0.030 W/mK 이하', density:'-', fireRating:'가등급', application:'지붕·벽체·바닥·배관 보온'},
+    '접착식 단열벽지':         {category:'접착식 단열벽지', conductivity:'0.040 W/mK 이하', density:'-', fireRating:'준불연', application:'주거·사무실 내벽 결로 방지'},
+  };
+  if(!p.specs && SPECS_MAP[p.name]) p.specs = SPECS_MAP[p.name];
+
   // 물성 테이블
   const specsEl = document.getElementById('modalSpecs');
   if(p.specs) {
@@ -644,7 +659,8 @@ async function openProduct(id){
     specsEl.innerHTML = '<div style="font-size:12px;color:var(--text-muted);padding:8px 0;">물성 정보가 없습니다.</div>';
   }
   // 이미지 슬라이더
-  const images = p.images && p.images.length ? p.images : (p.image ? [p.image] : []);
+  const images = [p.image_detail1, p.image_detail2, p.image_detail3].filter(Boolean);
+  _initSlider(images.length ? images : (p.image_main ? [p.image_main] : []));
   _initSlider(images);
   document.getElementById('modalPriceWrap').innerHTML='<div class="loading-wrap" style="padding:20px 0;"><i class="fa-solid fa-spinner fa-spin"></i><span>가격 불러오는 중...</span></div>';
   document.getElementById('modalSubTabs').style.display='none';
