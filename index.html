@@ -214,6 +214,15 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .submit-success h3{font-size:18px;font-weight:800;margin-bottom:8px;}
 .submit-success p{font-size:13px;color:var(--text-sub);line-height:1.6;}
 
+/* ══ 견적 단위 선택 ══ */
+.unit-select{padding:13px 8px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;color:var(--text);background:white;outline:none;transition:border-color .2s;flex-shrink:0;}
+.unit-select:focus{border-color:var(--primary);}
+/* ══ 견적 확인 모달 ══ */
+.confirm-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;gap:12px;}
+.confirm-row:last-child{border-bottom:none;}
+.confirm-label{color:var(--text-muted);font-weight:500;flex-shrink:0;}
+.confirm-value{font-weight:600;color:var(--text);text-align:right;word-break:break-all;}
+
 /* ══ 회사소개 ══ */
 .company-hero{background:linear-gradient(160deg,var(--primary-dark),var(--primary));padding:32px 20px;text-align:center;color:white;}
 .company-logo-big{width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;}
@@ -260,6 +269,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .notice-banner-icon{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:11px;color:white;flex-shrink:0;}
 .notice-banner-text{flex:1;font-size:12px;font-weight:700;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .notice-banner-arrow{color:rgba(255,255,255,.8);font-size:11px;flex-shrink:0;}
+.banner-new-dot{width:8px;height:8px;border-radius:50%;background:white;flex-shrink:0;display:none;}
+.banner-new-dot.show{display:block;animation:bannerDotPulse 1.4s ease-out infinite;}
+@keyframes bannerDotPulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.8);}70%{box-shadow:0 0 0 7px rgba(255,255,255,0);}100%{box-shadow:0 0 0 0 rgba(255,255,255,0);}}
 
 /* ══ 공지 모달 ══ */
 #noticeModal{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);align-items:flex-end;}
@@ -313,6 +325,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 <div id="noticeBanner" onclick="openNoticeModal()">
   <div class="notice-banner-icon"><i class="fa-solid fa-bell"></i></div>
   <div class="notice-banner-text" id="noticeBannerText">공지사항</div>
+  <div class="banner-new-dot" id="bannerNewDot"></div>
   <div class="notice-banner-arrow"><i class="fa-solid fa-chevron-right"></i></div>
 </div>
 
@@ -408,11 +421,11 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
         <select class="form-select" id="estProduct"><option value="">선택해주세요</option><option>아이소핑크 압출법단열재</option><option>비드법단열재 1종</option><option>비드법단열재 2종</option><option>준불연 비드법단열재</option><option>경질우레탄보드</option><option>준불연 경질우레탄보드</option><option>준불연 PF보드</option><option>미네랄울 불연단열재</option><option>열반사단열재</option><option>접착식 단열벽지</option><option>기타</option></select>
       </div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">시공 면적</label><input type="text" class="form-input" id="estArea" placeholder="예: 50㎡"></div>
-        <div class="form-group"><label class="form-label">희망 두께</label><input type="text" class="form-input" id="estThick" placeholder="예: 50mm"></div>
+        <div class="form-group"><label class="form-label">시공 면적</label><div style="display:flex;gap:6px;"><input type="number" class="form-input" id="estArea" placeholder="50" style="flex:1;min-width:0;"><select class="unit-select" id="estAreaUnit"><option value="평">평</option><option value="회배">회배</option><option value="㎡">㎡</option></select></div></div>
+        <div class="form-group"><label class="form-label">희망 두께</label><div style="display:flex;gap:6px;"><input type="number" class="form-input" id="estThick" placeholder="50" style="flex:1;min-width:0;"><select class="unit-select" id="estThickUnit"><option value="T">T</option><option value="mm">mm</option><option value="cm">cm</option></select></div></div>
       </div>
       <div class="form-group"><label class="form-label">요청 사항</label><textarea class="form-textarea" id="estMemo" placeholder="시공 장소, 일정, 추가 문의사항 등을 자유롭게 적어주세요."></textarea></div>
-      <button class="submit-btn" onclick="submitEstimate()"><i class="fa-solid fa-paper-plane"></i> 견적 요청하기</button>
+      <button class="submit-btn" onclick="checkEstimate()"><i class="fa-solid fa-paper-plane"></i> 견적 요청하기</button>
     </div>
     <div class="submit-success" id="submitSuccess">
       <div class="submit-success-icon"><i class="fa-solid fa-check"></i></div>
@@ -527,6 +540,22 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 <div id="toast"></div>
 
+<!-- 견적 확인 모달 -->
+<div class="modal-overlay" id="estimateConfirmModal" onclick="closeEstimateConfirm(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-body">
+      <div style="font-size:17px;font-weight:800;margin-bottom:4px;"><i class="fa-solid fa-clipboard-check" style="color:var(--primary);margin-right:8px;"></i>견적 내용 확인</div>
+      <div style="font-size:13px;color:var(--text-sub);margin-bottom:20px;">아래 내용으로 견적을 발송합니다.</div>
+      <div id="confirmDetails"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-secondary" onclick="closeEstimateConfirmDirect()"><i class="fa-solid fa-pen"></i> 수정</button>
+      <button class="modal-btn modal-btn-primary" onclick="submitEstimate()"><i class="fa-solid fa-paper-plane"></i> 발송</button>
+    </div>
+  </div>
+</div>
+
 <!-- 공지 모달 -->
 <div id="noticeModal" onclick="closeNoticeModal(event)">
   <div class="notice-sheet">
@@ -621,21 +650,38 @@ async function loadNotices() {
     _notices = (!error && data) ? data : [];
   } catch(e) { _notices = []; }
 
-  // 배너 표시
+  _updateNoticeBanner();
+}
+
+function _updateNoticeBanner() {
   const banner = document.getElementById('noticeBanner');
-  const badge = document.getElementById('navNoticeBadge');
-  if (_notices.length > 0) {
-    document.getElementById('noticeBannerText').textContent = _notices[0].title;
-    banner.classList.add('show');
-    const lastSeen = localStorage.getItem('energuard_last_seen_notice');
-    if (String(_notices[0].id) !== lastSeen) {
-      badge.classList.add('show');
-    } else {
-      badge.classList.remove('show');
-    }
-  } else {
+  const badge  = document.getElementById('navNoticeBadge');
+
+  if (!_notices.length) {
     banner.classList.remove('show');
     badge.classList.remove('show');
+    return;
+  }
+
+  const importantNotice = _notices.find(n => n.is_important);
+  const regularNotices  = _notices.filter(n => !n.is_important);
+  const latestRegular   = regularNotices[0];
+  const lastSeen        = localStorage.getItem('energuard_last_seen_notice');
+  const hasUnseen       = latestRegular && String(latestRegular.id) !== lastSeen;
+
+  // 안 읽은 일반 공지가 있으면 그것을, 없으면 중요공지(또는 최신공지)를 배너에
+  const bannerNotice = hasUnseen ? latestRegular : (importantNotice || _notices[0]);
+
+  document.getElementById('noticeBannerText').textContent = bannerNotice.title;
+  banner.classList.add('show');
+
+  const dot = document.getElementById('bannerNewDot');
+  if (hasUnseen) {
+    badge.classList.add('show');
+    if (dot) dot.classList.add('show');
+  } else {
+    badge.classList.remove('show');
+    if (dot) dot.classList.remove('show');
   }
 }
 
@@ -645,10 +691,20 @@ function openNoticeModal() {
   document.body.style.overflow = 'hidden';
   renderNoticeList();
   history.pushState({ noticeModal: true }, '');
-  if (_notices.length > 0) {
-    localStorage.setItem('energuard_last_seen_notice', String(_notices[0].id));
-    document.getElementById('navNoticeBadge').classList.remove('show');
+
+  // 일반 공지 중 최신 것을 읽음 처리
+  const latestRegular = _notices.filter(n => !n.is_important)[0];
+  if (latestRegular) {
+    localStorage.setItem('energuard_last_seen_notice', String(latestRegular.id));
   }
+
+  // 배너를 즉시 중요공지로 복귀
+  document.getElementById('navNoticeBadge').classList.remove('show');
+  const dot = document.getElementById('bannerNewDot');
+  if (dot) dot.classList.remove('show');
+  const importantNotice = _notices.find(n => n.is_important);
+  const fallback = importantNotice || _notices[0];
+  if (fallback) document.getElementById('noticeBannerText').textContent = fallback.title;
 }
 
 function renderNoticeList() {
@@ -659,10 +715,12 @@ function renderNoticeList() {
   }
   el.innerHTML = _notices.map(n => {
     const date = new Date(n.created_at).toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' });
+    const badgeLabel = n.is_important ? '중요' : '공지';
+    const badgeColor = n.is_important ? 'background:var(--accent);' : '';
     return `
-      <div class="notice-item">
+      <div class="notice-item"${n.is_important ? ' style="border-color:var(--accent);border-width:1.5px;"' : ''}>
         <div class="notice-item-header">
-          <div class="notice-badge">공지</div>
+          <div class="notice-badge" style="${badgeColor}">${badgeLabel}</div>
           <div class="notice-item-title">${n.title}</div>
         </div>
         <div class="notice-item-content">${n.content}</div>
@@ -979,8 +1037,12 @@ function goEstimateFromModal(){
 window.addEventListener('popstate', function(e) {
   const modal = document.getElementById('productModal');
   const noticeModal = document.getElementById('noticeModal');
+  const confirmModal = document.getElementById('estimateConfirmModal');
   if(noticeModal.classList.contains('open')) {
     noticeModal.classList.remove('open');
+    document.body.style.overflow = '';
+  } else if(confirmModal.classList.contains('open')) {
+    confirmModal.classList.remove('open');
     document.body.style.overflow = '';
   } else if(modal.classList.contains('open')) {
     modal.classList.remove('open');
@@ -988,38 +1050,82 @@ window.addEventListener('popstate', function(e) {
   }
 });
 
-async function submitEstimate(){
+function checkEstimate(){
   const name    = document.getElementById('estName').value.trim();
   const phone   = document.getElementById('estPhone').value.trim();
   const product = document.getElementById('estProduct').value;
   const company = document.getElementById('estCompany').value.trim();
   const area    = document.getElementById('estArea').value.trim();
-  const thickness = document.getElementById('estThick').value.trim();
+  const areaUnit = document.getElementById('estAreaUnit').value;
+  const thick   = document.getElementById('estThick').value.trim();
+  const thickUnit = document.getElementById('estThickUnit').value;
   const memo    = document.getElementById('estMemo').value.trim();
 
   if(!name)   { showToast('이름을 입력해주세요.'); return; }
   if(!phone)  { showToast('연락처를 입력해주세요.'); return; }
   if(!product){ showToast('관심 제품을 선택해주세요.'); return; }
 
-  const btn = document.querySelector('.submit-btn');
+  const rows = [
+    ['이름', name],
+    ['연락처', phone],
+    ...(company ? [['회사명', company]] : []),
+    ['관심 제품', product],
+    ...(area  ? [['시공 면적', `${area}${areaUnit}`]]   : []),
+    ...(thick ? [['희망 두께', `${thick}${thickUnit}`]] : []),
+    ...(memo  ? [['요청 사항', memo]]                    : []),
+  ];
+  document.getElementById('confirmDetails').innerHTML = rows.map(([label, value]) =>
+    `<div class="confirm-row"><span class="confirm-label">${label}</span><span class="confirm-value">${value}</span></div>`
+  ).join('');
+
+  document.getElementById('estimateConfirmModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  history.pushState({estimateConfirm: true}, '');
+}
+
+function closeEstimateConfirm(e){
+  if(e.target === document.getElementById('estimateConfirmModal')) closeEstimateConfirmDirect();
+}
+function closeEstimateConfirmDirect(){
+  document.getElementById('estimateConfirmModal').classList.remove('open');
+  document.body.style.overflow = '';
+  if(history.state && history.state.estimateConfirm) history.back();
+}
+
+async function submitEstimate(){
+  document.getElementById('estimateConfirmModal').classList.remove('open');
+  document.body.style.overflow = '';
+
+  const name    = document.getElementById('estName').value.trim();
+  const phone   = document.getElementById('estPhone').value.trim();
+  const product = document.getElementById('estProduct').value;
+  const company = document.getElementById('estCompany').value.trim();
+  const area    = document.getElementById('estArea').value.trim();
+  const areaUnit = document.getElementById('estAreaUnit').value;
+  const thick   = document.getElementById('estThick').value.trim();
+  const thickUnit = document.getElementById('estThickUnit').value;
+  const memo    = document.getElementById('estMemo').value.trim();
+
+  const areaFull  = area  ? `${area}${areaUnit}`   : '';
+  const thickFull = thick ? `${thick}${thickUnit}` : '';
+
+  const btn = document.querySelector('#estimateForm .submit-btn');
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 제출 중...';
   btn.disabled = true;
 
   const now = new Date().toLocaleString('ko-KR');
 
   try {
-    // Supabase 저장
     await sb.from('estimate_requests').insert([{
-      name, phone, company, product, area, thickness, memo,
+      name, phone, company, product, area: areaFull, thickness: thickFull, memo,
       created_at: new Date().toISOString()
     }]);
   } catch(e) { console.log('견적저장:', e); }
 
   try {
-    // EmailJS 발송
     emailjs.init('KMlIlRPftSAeD5lgW');
     await emailjs.send('service_7bnpzpo', 'template_zx8s3lf', {
-      name, phone, company, product, area, thickness, memo, time: now
+      name, phone, company, product, area: areaFull, thickness: thickFull, memo, time: now
     });
   } catch(e) { console.log('이메일발송:', e); }
 
@@ -1031,7 +1137,9 @@ function resetEstimate(){
   document.getElementById('submitSuccess').style.display='none';
   ['estName','estPhone','estCompany','estArea','estThick','estMemo'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('estProduct').value='';
-  const btn=document.querySelector('.submit-btn');
+  document.getElementById('estAreaUnit').value='㎡';
+  document.getElementById('estThickUnit').value='mm';
+  const btn=document.querySelector('#estimateForm .submit-btn');
   btn.innerHTML='<i class="fa-solid fa-paper-plane"></i> 견적 요청하기';btn.disabled=false;
 }
 
