@@ -363,6 +363,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
       <div class="cat-chip" onclick="filterHomeProducts('미네랄울 불연단열재')">미네랄울</div>
       <div class="cat-chip" onclick="filterHomeProducts('열반사단열재')">열반사</div>
       <div class="cat-chip" onclick="filterHomeProducts('접착식 단열벽지')">단열벽지</div>
+      <div class="cat-chip" onclick="filterHomeProducts('이액형 폴리우레탄폼')">이액형 PU폼</div>
     </div>
     <div class="product-grid" id="homeProductGrid">
       <div class="loading-wrap" style="grid-column:1/-1;"><i class="fa-solid fa-spinner fa-spin"></i><span>상품 불러오는 중...</span></div>
@@ -401,6 +402,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
       <div class="cat-chip" onclick="setCatalogCat('미네랄울 불연단열재',this)">미네랄울</div>
       <div class="cat-chip" onclick="setCatalogCat('열반사단열재',this)">열반사</div>
       <div class="cat-chip" onclick="setCatalogCat('접착식 단열벽지',this)">단열벽지</div>
+      <div class="cat-chip" onclick="setCatalogCat('이액형 폴리우레탄폼',this)">이액형 PU폼</div>
     </div>
   </div>
   <div class="catalog-list" id="catalogList"><div class="loading-wrap"><i class="fa-solid fa-spinner fa-spin"></i><span>상품 불러오는 중...</span></div></div>
@@ -418,7 +420,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
         <div class="form-group"><label class="form-label">회사명</label><input type="text" class="form-input" id="estCompany" placeholder="(선택)"></div>
       </div>
       <div class="form-group"><label class="form-label">관심 제품 <span>*</span></label>
-        <select class="form-select" id="estProduct"><option value="">선택해주세요</option><option>아이소핑크 압출법단열재</option><option>비드법단열재 1종</option><option>비드법단열재 2종</option><option>준불연 비드법단열재</option><option>경질우레탄보드</option><option>준불연 경질우레탄보드</option><option>준불연 PF보드</option><option>미네랄울 불연단열재</option><option>열반사단열재</option><option>접착식 단열벽지</option><option>기타</option></select>
+        <select class="form-select" id="estProduct"><option value="">선택해주세요</option><option>아이소핑크 압출법단열재</option><option>비드법단열재 1종</option><option>비드법단열재 2종</option><option>준불연 비드법단열재</option><option>경질우레탄보드</option><option>준불연 경질우레탄보드</option><option>준불연 PF보드</option><option>미네랄울 불연단열재</option><option>열반사단열재</option><option>접착식 단열벽지</option><option>이액형 폴리우레탄폼</option><option>기타</option></select>
       </div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">시공 면적</label><div style="display:flex;gap:6px;"><input type="number" class="form-input" id="estArea" placeholder="50" style="flex:1;min-width:0;"><select class="unit-select" id="estAreaUnit"><option value="평">평</option><option value="회배">회배</option><option value="㎡">㎡</option></select></div></div>
@@ -518,7 +520,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
       <div class="modal-section-title">제품 물성</div>
       <div id="modalSpecs"></div>
       <div class="modal-divider"></div>
-      <div class="modal-section-title">두께별 가격</div>
+      <div class="modal-section-title" id="modalPriceTitle">두께별 가격</div>
       <div id="modalSubTabs" style="display:none;margin-bottom:10px;">
         <div class="category-scroll" id="modalSubTabList"></div>
       </div>
@@ -768,13 +770,15 @@ function getDummyProducts(){return[
     specs:{category:'열반사 단열재 (Reflective)', conductivity:'0.030 W/mK 이하', density:'-', fireRating:'가등급', application:'지붕·벽체·바닥·배관 보온'}},
   {id:10,name:'접착식 단열벽지',tagline:'결로 방지 간편 시공',category:'접착식 단열벽지',spec:'1롤',price:15000,price_unit:'롤',description:'수용성 접착제를 사용한 친환경 단열벽지로, 간편한 시공과 함께 결로 방지 및 단열 효과를 동시에 제공합니다.',thickness:'5T',image:'',
     specs:{category:'접착식 단열벽지', conductivity:'0.040 W/mK 이하', density:'-', fireRating:'준불연', application:'주거·사무실 내벽 결로 방지'}},
+  {id:11,name:'이액형 폴리우레탄폼',tagline:'틈새 충전·현장 발포형',category:'이액형 폴리우레탄폼',spec:'경질 | 연질',price:0,price_unit:'세트',description:'경질·연질 2종으로 구성된 현장 발포형 이액형 폴리우레탄폼입니다. 배관 보온, 창호 틈새 기밀, 지붕·벽체 접합부 보완에 최적화되어 있습니다.',thickness:'경질 | 연질',image:'',
+    specs:{category:'이액형 폴리우레탄폼', conductivity:'경질 0.020 / 연질 0.040 W/mK', density:'-', fireRating:'자기소화성', application:'배관 보온, 창호 틈새 기밀, 지붕·벽체 접합부 보완'}},
 ];}
 
 
 function renderHomeProducts(cat){
   currentHomeCat=cat;
   const grid=document.getElementById('homeProductGrid');
-  let list=(cat==='전체'?allProducts:allProducts.filter(p=>p.category===cat)).slice(0,10);
+  let list=(cat==='전체'?allProducts:allProducts.filter(p=>p.category===cat)).slice(0,11);
   if(!list.length){grid.innerHTML='<div class="empty-wrap" style="grid-column:1/-1;"><i class="fa-solid fa-box-open"></i><span>상품이 없습니다.</span></div>';return;}
   grid.innerHTML=list.map(p=>`
     <div class="product-card" onclick="openProduct(${p.id})">
@@ -786,7 +790,7 @@ function renderHomeProducts(cat){
         <div class="product-name">${p.name}</div>
         ${p.tagline?`<div class="product-tagline">${p.tagline}</div>`:''}
         <div class="product-spec">${p.spec||''}</div>
-        <div style="font-size:11px;font-weight:500;color:var(--text-sub);">두께별 상이 · 견적 문의</div>
+        <div style="font-size:11px;font-weight:500;color:var(--text-sub);">${p.name==='이액형 폴리우레탄폼'?'종류별 상이 · 견적 문의':'두께별 상이 · 견적 문의'}</div>
       </div>
     </div>`).join('');
 }
@@ -810,7 +814,7 @@ function renderCatalog(){
         <div class="catalog-item-name">${p.name}</div>
         ${p.tagline?`<div style="font-size:10px;font-weight:500;color:var(--primary);opacity:0.75;margin-bottom:4px;">${p.tagline}</div>`:''}
         <div class="catalog-item-spec">${p.spec||''} ${p.thickness?'| '+p.thickness:''}</div>
-        <div style="font-size:11px;font-weight:500;color:var(--text-sub);">두께별 상이 · 견적 문의</div>
+        <div style="font-size:11px;font-weight:500;color:var(--text-sub);">${p.name==='이액형 폴리우레탄폼'?'종류별 상이 · 견적 문의':'두께별 상이 · 견적 문의'}</div>
       </div>
     </div>`).join('');
 }
@@ -889,6 +893,7 @@ async function openProduct(id){
   document.getElementById('modalCat').textContent=p.category;
   document.getElementById('modalName').textContent=p.name;
   document.getElementById('modalDesc').textContent=p.description||'상세 설명이 없습니다.';
+  document.getElementById('modalPriceTitle').textContent = p.name==='이액형 폴리우레탄폼' ? '종류별 가격' : '두께별 가격';
 
   // 제품명 기준 specs 매핑 (Supabase에 specs 컬럼 없을 때 fallback)
   const SPECS_MAP = {
@@ -900,8 +905,9 @@ async function openProduct(id){
     '준불연 경질우레탄보드':   {category:'준불연 경질 우레탄폼 보드', conductivity:'0.024 W/mK 이하', density:'제조사 제시값 이상', fireRating:'준불연 (KS F ISO 5660)', application:'모든 건축물의 지붕, 벽, 바닥 등 준불연 성능이 필요한 경우'},
     '준불연 PF보드':           {category:'페놀폼 보드(PF)', conductivity:'0.020 W/mK 이하', density:'제조사 제시값 이상', fireRating:'준불연', application:'공동주택·공공시설·고성능 외벽'},
     '미네랄울 불연단열재':     {category:'미네랄울 불연', conductivity:'0.036 W/mK 이하', density:'60~70 kg/m³', fireRating:'불연', application:'화재대비가 필요한 건축물의 구조물, 기계실, 외단열, 경계벽, 내화 벽체'},
-    '열반사단열재':            {category:'열반사 단열재', conductivity:'제조사 제시값 이하', density:'-', fireRating:'가연성', application:'지붕·벽체·바닥·배관 보온'},
-    '접착식 단열벽지':         {category:'접착식 단열벽지', conductivity:'제조사 제시값 이하', density:'-', fireRating:'가연성', application:'주거·사무실 내벽 결로 방지'},
+    '열반사단열재':            {category:'열반사 단열재', conductivity:'제조사 제시값 이하', density:'-', fireRating:'-', application:'지붕·벽체·바닥·배관 보온'},
+    '접착식 단열벽지':         {category:'접착식 단열벽지', conductivity:'제조사 제시값 이하', density:'-', fireRating:'-', application:'주거·사무실 내벽 결로 방지'},
+    '이액형 폴리우레탄폼':    {category:'이액형 폴리우레탄폼', conductivity:'경질 0.020 / 연질 0.040 W/mK', density:'-', fireRating:'자기소화성', application:'배관 보온, 창호 틈새 기밀, 지붕·벽체 접합부 보완'},
   };
   if(!p.specs && SPECS_MAP[p.name]) p.specs = SPECS_MAP[p.name];
 
@@ -969,6 +975,31 @@ function _renderModalPrice() {
   // sub1 필터
   const filtered1 = _currentSub1 ? data.filter(r=>r.sub1===_currentSub1) : data;
 
+  const isPUFoam = currentProduct&&currentProduct.name==='이액형 폴리우레탄폼';
+
+  // 이액형 폴리우레탄폼: sub2를 탭이 아닌 테이블 행으로 표시
+  if(isPUFoam) {
+    document.getElementById('modalSubSubTabs').style.display='none';
+    if(!filtered1.length) {
+      document.getElementById('modalPriceWrap').innerHTML='<div class="empty-wrap"><span>해당 항목의 가격 정보가 없습니다.</span></div>';
+      return;
+    }
+    document.getElementById('modalPriceWrap').innerHTML=`
+      <table class="price-table">
+        <thead><tr><th>종류</th><th>규격</th><th>가격</th><th>단위</th></tr></thead>
+        <tbody>
+          ${filtered1.map(r=>`
+            <tr>
+              <td>${r.sub2||'-'}</td>
+              <td>${r.spec||'-'}</td>
+              <td>${Number(r.price).toLocaleString()}원</td>
+              <td>세트</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+    return;
+  }
+
   // sub2 목록 추출
   const sub2List = [...new Set(filtered1.map(r=>r.sub2).filter(Boolean))];
 
@@ -999,7 +1030,7 @@ function _renderModalPrice() {
       <tbody>
         ${rows.map(r=>`
           <tr>
-            <td>${r.thickness}T</td>
+            <td>${r.thickness+'T'}</td>
             <td>${r.spec||'-'}</td>
             <td>${Number(r.price).toLocaleString()}원</td>
             <td>${r.unit||'장'}</td>
