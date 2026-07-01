@@ -227,14 +227,14 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .t-bubble-title{font-size:17px;font-weight:800;color:white;margin-bottom:6px;letter-spacing:-.3px;text-shadow:0 1px 4px rgba(0,0,0,.4);}
 .t-bubble-desc{font-size:13px;color:rgba(255,255,255,.78);line-height:1.6;white-space:pre-line;text-shadow:0 1px 3px rgba(0,0,0,.3);}
 .t-next-btn{background:none;border:none;color:white;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;padding:10px 0 0;margin:0;pointer-events:auto;letter-spacing:-.1px;display:block;}
-#tutorialCenterCard .t-next-btn{background:var(--primary);color:white;width:100%;padding:14px;border-radius:12px;margin-top:20px;font-size:15px;letter-spacing:-.3px;}
+#tutorialCenterCard .t-next-btn{background:white;color:var(--primary);display:inline-block;width:auto;padding:13px 36px;border-radius:24px;margin-top:24px;font-size:15px;font-weight:800;letter-spacing:-.3px;}
 #tutorialSkip{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,.75);font-family:inherit;font-size:13px;font-weight:600;padding:8px 12px;cursor:pointer;}
-#tutorialDots{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;gap:10px;align-items:center;}
+#tutorialDots{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);display:flex;gap:10px;align-items:center;}
 .t-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
 .t-dot.active{background:white;width:24px;border-radius:5px;}
-#tutorialCenterCard{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border-radius:24px;padding:36px 28px;text-align:center;width:calc(100% - 48px);max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
-.t-center-title{font-size:22px;font-weight:900;color:var(--text);margin-bottom:10px;letter-spacing:-.4px;}
-.t-center-desc{font-size:15px;color:var(--text-sub);line-height:1.7;}
+#tutorialCenterCard{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:none;border-radius:0;padding:0;text-align:center;width:calc(100% - 48px);max-width:340px;box-shadow:none;}
+.t-center-title{font-size:24px;font-weight:900;color:white;margin-bottom:10px;letter-spacing:-.4px;text-shadow:0 1px 4px rgba(0,0,0,.4);}
+.t-center-desc{font-size:15px;color:rgba(255,255,255,.78);line-height:1.7;text-shadow:0 1px 3px rgba(0,0,0,.3);}
 
 /* ══ 임시저장 팝업 ══ */
 #draftPopup{position:fixed;inset:0;z-index:220;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:none;align-items:flex-end;}
@@ -591,7 +591,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   <div id="tutorialSpotlight"></div>
   <svg id="tutorialArrow" style="display:none;position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;overflow:visible;">
     <defs>
-      <marker id="arrowTip" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <marker id="arrowTip" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
         <path d="M0,0 L8,3 L0,6 z" fill="rgba(255,255,255,0.85)"/>
       </marker>
     </defs>
