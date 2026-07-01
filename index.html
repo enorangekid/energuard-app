@@ -697,7 +697,9 @@ let allProducts=[],currentCatalogCat='전체',currentHomeCat='전체',currentPro
 const pages=['home','catalog','estimate','company','wizard'];
 const navOrder={home:0,catalog:1,estimate:2,company:3};
 
-function showPage(id){
+let _currentPage='home';
+function showPage(id,push=true){
+  _currentPage=id;
   pages.forEach(p=>{
     document.getElementById('page-'+p).classList.toggle('active',p===id);
     const navEl=document.getElementById('nav-'+p);
@@ -707,23 +709,35 @@ function showPage(id){
     document.getElementById('navIndicator').style.transform=`translateX(${navOrder[id]*100}%)`;
   window.scrollTo(0,0);
   if(id==='wizard'){
-    const frame = document.getElementById('wizardFrame');
-    if(frame && !frame.dataset.loaded){ frame.dataset.loaded='1'; }
+    const frame=document.getElementById('wizardFrame');
+    if(frame&&!frame.dataset.loaded){ frame.dataset.loaded='1'; }
   }
   if((id==='catalog'||id==='home')&&allProducts.length===0)loadProducts();
   if(id==='estimate') showDraftPopupIfNeeded();
+  if(push){
+    if(id!=='home') history.pushState({page:id},'','#'+id);
+    else history.replaceState({page:'home'},'',location.pathname);
+  }
 }
 
-/* ── 뒤로 가기 (두 번 누르면 종료) ── */
-let _backPressedOnce=false;
+/* ── 뒤로 가기 ── */
 window.addEventListener('popstate',function(){
-  history.pushState(null,'');
-  if(_backPressedOnce) return;
-  _backPressedOnce=true;
-  showToast('한 번 더 누르면 앱이 종료됩니다.');
-  setTimeout(()=>{ _backPressedOnce=false; },2000);
+  const noticeModal=document.getElementById('noticeModal');
+  if(noticeModal&&noticeModal.classList.contains('open')){
+    noticeModal.classList.remove('open'); document.body.style.overflow=''; return;
+  }
+  const confirmModal=document.getElementById('estimateConfirmModal');
+  if(confirmModal&&confirmModal.classList.contains('open')){
+    confirmModal.classList.remove('open'); document.body.style.overflow=''; return;
+  }
+  if(document.getElementById('productModal').classList.contains('open')){
+    closeModalDirect(); return;
+  }
+  if(document.getElementById('tutorialOverlay').classList.contains('active')){
+    endTutorial(); return;
+  }
+  if(_currentPage!=='home') showPage('home',false);
 });
-history.pushState(null,'');
 
 /* ── 위자드 postMessage 수신 ── */
 window.addEventListener('message', function(e){
@@ -1204,7 +1218,6 @@ function checkEstimate(){
 
   document.getElementById('estimateConfirmModal').classList.add('open');
   document.body.style.overflow = 'hidden';
-  history.pushState({estimateConfirm: true}, '');
 }
 
 function closeEstimateConfirm(e){
