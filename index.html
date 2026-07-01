@@ -223,12 +223,11 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 #tutorialOverlay{position:fixed;inset:0;z-index:9500;display:none;}
 #tutorialOverlay.active{display:block;animation:fadeIn .3s ease;}
 #tutorialSpotlight{position:absolute;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,0.78);pointer-events:none;transition:left .35s ease,top .35s ease,width .35s ease,height .35s ease;}
-.tutorial-bubble{position:absolute;background:white;border-radius:14px;padding:16px 18px;box-shadow:0 6px 24px rgba(0,0,0,.28);width:250px;pointer-events:none;}
-.tutorial-bubble.arrow-down::after{content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);border:10px solid transparent;border-top-color:white;border-bottom-width:0;}
-.tutorial-bubble.arrow-up::after{content:'';position:absolute;top:-10px;left:50%;transform:translateX(-50%);border:10px solid transparent;border-bottom-color:white;border-top-width:0;}
-.t-bubble-title{font-size:16px;font-weight:800;color:var(--text);margin-bottom:5px;letter-spacing:-.3px;}
-.t-bubble-desc{font-size:13px;color:var(--text-sub);line-height:1.6;white-space:pre-line;}
-.t-next-btn{width:100%;padding:11px;border-radius:10px;background:var(--primary);color:white;font-family:inherit;font-size:14px;font-weight:700;border:none;cursor:pointer;margin-top:12px;pointer-events:auto;letter-spacing:-.2px;}
+.tutorial-bubble{position:absolute;background:none;padding:0;box-shadow:none;width:240px;pointer-events:none;}
+.t-bubble-title{font-size:17px;font-weight:800;color:white;margin-bottom:6px;letter-spacing:-.3px;text-shadow:0 1px 4px rgba(0,0,0,.4);}
+.t-bubble-desc{font-size:13px;color:rgba(255,255,255,.78);line-height:1.6;white-space:pre-line;text-shadow:0 1px 3px rgba(0,0,0,.3);}
+.t-next-btn{background:none;border:none;color:white;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;padding:10px 0 0;margin:0;pointer-events:auto;letter-spacing:-.1px;display:block;}
+#tutorialCenterCard .t-next-btn{background:var(--primary);color:white;width:100%;padding:14px;border-radius:12px;margin-top:20px;font-size:15px;letter-spacing:-.3px;}
 #tutorialSkip{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,.75);font-family:inherit;font-size:13px;font-weight:600;padding:8px 12px;cursor:pointer;}
 #tutorialDots{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;gap:10px;align-items:center;}
 .t-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
@@ -590,10 +589,18 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 <!-- 튜토리얼 오버레이 -->
 <div id="tutorialOverlay">
   <div id="tutorialSpotlight"></div>
+  <svg id="tutorialArrow" style="display:none;position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;overflow:visible;">
+    <defs>
+      <marker id="arrowTip" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6 z" fill="rgba(255,255,255,0.85)"/>
+      </marker>
+    </defs>
+    <path id="tutorialArrowPath" stroke="rgba(255,255,255,0.85)" stroke-width="2.5" fill="none" stroke-linecap="round" marker-end="url(#arrowTip)"/>
+  </svg>
   <div id="tutorialBubble" class="tutorial-bubble">
     <div id="tBubbleTitle" class="t-bubble-title"></div>
     <div id="tBubbleDesc" class="t-bubble-desc"></div>
-    <button class="t-next-btn" onclick="nextTutorial()">다음</button>
+    <button class="t-next-btn" onclick="nextTutorial()">다음 →</button>
   </div>
   <div id="tutorialCenterCard" style="display:none;">
     <div class="t-center-title">준비 완료!</div>
@@ -1273,6 +1280,23 @@ function startTutorialIfNeeded(){
   document.body.style.overflow='hidden';
   _showTStep(0);
 }
+function _setArrow(step,rect,pad){
+  const arrow=document.getElementById('tutorialArrow');
+  const path=document.getElementById('tutorialArrowPath');
+  arrow.style.display='block';
+  const cx=rect.left+rect.width/2;
+  let x1,y1,x2,y2,cpx,cpy;
+  if(step.pos==='above'){
+    x2=cx;        y2=rect.top-pad;       // 화살촉: 스포트라이트 위쪽 중앙
+    x1=cx-22;     y1=y2-45;             // 꼬리: 텍스트 근처, 살짝 왼쪽
+    cpx=cx+14;    cpy=y2-16;            // 제어점: 오른쪽으로 휘어짐
+  } else {
+    x2=cx;        y2=rect.bottom+pad;    // 화살촉: 스포트라이트 아래쪽 중앙
+    x1=cx+22;     y1=y2+45;             // 꼬리: 텍스트 근처, 살짝 오른쪽
+    cpx=cx-14;    cpy=y2+16;            // 제어점: 왼쪽으로 휘어짐
+  }
+  path.setAttribute('d',`M${x1},${y1} Q${cpx},${cpy} ${x2},${y2}`);
+}
 function _showTStep(idx){
   const step=_TSTEPS[idx];
   const spot=document.getElementById('tutorialSpotlight');
@@ -1283,6 +1307,7 @@ function _showTStep(idx){
   if(!step.sel){
     // 5단계: 스포트라이트를 화면 밖으로 밀어 다크 베일 유지
     spot.style.cssText='display:block;left:-50px;top:-50px;width:1px;height:1px;border-radius:0;';
+    document.getElementById('tutorialArrow').style.display='none';
     bub.style.display='none';
     card.style.display='block';
     skipBtn.style.display='none';
@@ -1297,12 +1322,14 @@ function _showTStep(idx){
     const el=document.querySelector(step.sel);
     const rect=el?el.getBoundingClientRect():null;
     const vis=rect&&rect.width>0&&rect.height>0;
-    const pad=8;   // 스포트라이트가 요소 밖으로 넘치는 여백
-    const gap=10;  // 화살표 높이와 일치 → 화살표 끝이 스포트라이트 경계에 딱 붙음
+    const pad=8;
+    const gap=65;  // 텍스트↔스포트라이트 사이 여유 (SVG 화살표 45px + 여백 20px)
     if(vis){
       spot.style.cssText=`display:block;left:${rect.left-pad}px;top:${rect.top-pad}px;width:${rect.width+pad*2}px;height:${rect.height+pad*2}px;`;
+      _setArrow(step,rect,pad);
     } else {
       spot.style.display='none';
+      document.getElementById('tutorialArrow').style.display='none';
     }
     const bw=Math.min(250,window.innerWidth-40);
     const bLeft=vis
