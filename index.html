@@ -222,22 +222,20 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 /* ══ 튜토리얼 ══ */
 #tutorialOverlay{position:fixed;inset:0;z-index:9500;display:none;}
 #tutorialOverlay.active{display:block;animation:fadeIn .3s ease;}
-#tutorialSpotlight{position:absolute;border-radius:14px;box-shadow:0 0 0 9999px rgba(0,0,0,0.78);pointer-events:none;transition:left .35s ease,top .35s ease,width .35s ease,height .35s ease;}
-.tutorial-bubble{position:absolute;background:white;border-radius:20px;padding:24px 26px;box-shadow:0 8px 32px rgba(0,0,0,.3);width:300px;pointer-events:none;}
-.tutorial-bubble.arrow-down::after{content:'';position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);border:14px solid transparent;border-top-color:white;border-bottom-width:0;}
-.tutorial-bubble.arrow-up::after{content:'';position:absolute;top:-14px;left:50%;transform:translateX(-50%);border:14px solid transparent;border-bottom-color:white;border-top-width:0;}
-.t-bubble-emoji{font-size:30px;margin-bottom:10px;}
-.t-bubble-title{font-size:20px;font-weight:800;color:var(--text);margin-bottom:8px;letter-spacing:-.3px;}
-.t-bubble-desc{font-size:16px;color:var(--text-sub);line-height:1.65;white-space:pre-line;}
+#tutorialSpotlight{position:absolute;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,0.78);pointer-events:none;transition:left .35s ease,top .35s ease,width .35s ease,height .35s ease;}
+.tutorial-bubble{position:absolute;background:white;border-radius:14px;padding:16px 18px;box-shadow:0 6px 24px rgba(0,0,0,.28);width:250px;pointer-events:none;}
+.tutorial-bubble.arrow-down::after{content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);border:10px solid transparent;border-top-color:white;border-bottom-width:0;}
+.tutorial-bubble.arrow-up::after{content:'';position:absolute;top:-10px;left:50%;transform:translateX(-50%);border:10px solid transparent;border-bottom-color:white;border-top-width:0;}
+.t-bubble-title{font-size:16px;font-weight:800;color:var(--text);margin-bottom:5px;letter-spacing:-.3px;}
+.t-bubble-desc{font-size:13px;color:var(--text-sub);line-height:1.6;white-space:pre-line;}
 #tutorialSkip{position:absolute;top:20px;right:20px;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.45);color:white;font-family:inherit;font-size:15px;font-weight:600;padding:12px 22px;border-radius:24px;cursor:pointer;}
 #tutorialDots{position:absolute;bottom:108px;left:50%;transform:translateX(-50%);display:flex;gap:10px;align-items:center;}
 .t-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
 .t-dot.active{background:white;width:28px;border-radius:5px;}
 #tutorialNextBtn{position:absolute;bottom:28px;left:24px;right:24px;background:white;color:var(--primary);font-family:inherit;font-size:18px;font-weight:800;padding:20px;border-radius:16px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.2);letter-spacing:-.3px;}
-#tutorialCenterCard{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border-radius:28px;padding:44px 32px;text-align:center;width:calc(100% - 48px);max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
-.t-center-emoji{font-size:60px;margin-bottom:20px;}
-.t-center-title{font-size:26px;font-weight:900;color:var(--text);margin-bottom:12px;letter-spacing:-.4px;}
-.t-center-desc{font-size:17px;color:var(--text-sub);line-height:1.7;}
+#tutorialCenterCard{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border-radius:24px;padding:36px 28px;text-align:center;width:calc(100% - 48px);max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.t-center-title{font-size:22px;font-weight:900;color:var(--text);margin-bottom:10px;letter-spacing:-.4px;}
+.t-center-desc{font-size:15px;color:var(--text-sub);line-height:1.7;}
 
 /* ══ 임시저장 팝업 ══ */
 #draftPopup{position:fixed;inset:0;z-index:220;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:none;align-items:flex-end;}
@@ -593,12 +591,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 <div id="tutorialOverlay">
   <div id="tutorialSpotlight"></div>
   <div id="tutorialBubble" class="tutorial-bubble">
-    <div id="tBubbleEmoji" class="t-bubble-emoji"></div>
     <div id="tBubbleTitle" class="t-bubble-title"></div>
     <div id="tBubbleDesc" class="t-bubble-desc"></div>
   </div>
   <div id="tutorialCenterCard" style="display:none;">
-    <div class="t-center-emoji">✅</div>
     <div class="t-center-title">준비 완료!</div>
     <div class="t-center-desc">에너가드컴퍼니 앱을<br>시작해 보세요</div>
   </div>
@@ -1262,10 +1258,10 @@ async function submitEstimate(){
 }
 /* ── 튜토리얼 ── */
 const _TSTEPS=[
-  {sel:'#nav-catalog',  pos:'above',emoji:'📦',title:'제품 카탈로그', desc:'단열재 종류별 규격과 가격을\n한눈에 확인할 수 있어요'},
-  {sel:'.rec-banner',   pos:'below',emoji:'🔍',title:'단열재 추천',   desc:'몇 가지 질문으로 내 현장에\n맞는 제품을 추천받아요'},
-  {sel:'#nav-estimate', pos:'above',emoji:'📋',title:'견적 요청',     desc:'원하는 제품을 선택하고\n간편하게 견적을 요청하세요'},
-  {sel:'#noticeBanner', pos:'below',emoji:'🔔',title:'공지사항',      desc:'단가 변경, 배송 안내 등\n중요 소식을 확인할 수 있어요'},
+  {sel:'#nav-catalog',  pos:'above',title:'제품 카탈로그', desc:'단열재 종류별 규격과 가격을\n한눈에 확인할 수 있어요'},
+  {sel:'.rec-banner',   pos:'below',title:'단열재 추천',   desc:'몇 가지 질문으로 내 현장에\n맞는 제품을 추천받아요'},
+  {sel:'#nav-estimate', pos:'above',title:'견적 요청',     desc:'원하는 제품을 선택하고\n간편하게 견적을 요청하세요'},
+  {sel:'#noticeBanner', pos:'below',title:'공지사항',      desc:'단가 변경, 배송 안내 등\n중요 소식을 확인할 수 있어요'},
   {sel:null},
 ];
 let _tStep=0;
@@ -1296,7 +1292,6 @@ function _showTStep(idx){
   card.style.display='none';
   skipBtn.style.display='block';
   nextBtn.textContent='다음';
-  document.getElementById('tBubbleEmoji').textContent=step.emoji;
   document.getElementById('tBubbleTitle').textContent=step.title;
   document.getElementById('tBubbleDesc').textContent=step.desc;
   window.scrollTo(0,0);
@@ -1304,19 +1299,20 @@ function _showTStep(idx){
     const el=document.querySelector(step.sel);
     const rect=el?el.getBoundingClientRect():null;
     const vis=rect&&rect.width>0&&rect.height>0;
-    const pad=10;
+    const pad=8;   // 스포트라이트가 요소 밖으로 넘치는 여백
+    const gap=10;  // 화살표 높이와 일치 → 화살표 끝이 스포트라이트 경계에 딱 붙음
     if(vis){
       spot.style.cssText=`display:block;left:${rect.left-pad}px;top:${rect.top-pad}px;width:${rect.width+pad*2}px;height:${rect.height+pad*2}px;`;
     } else {
       spot.style.display='none';
     }
-    const bw=Math.min(300,window.innerWidth-40);
+    const bw=Math.min(250,window.innerWidth-40);
     const bLeft=vis
       ?Math.max(20,Math.min(rect.left+rect.width/2-bw/2,window.innerWidth-bw-20))
       :(window.innerWidth-bw)/2;
     let bPos;
-    if(step.pos==='above'&&vis)      bPos=`bottom:${window.innerHeight-rect.top+pad+16}px;top:auto;`;
-    else if(step.pos==='below'&&vis) bPos=`top:${rect.bottom+pad+16}px;bottom:auto;`;
+    if(step.pos==='above'&&vis)      bPos=`bottom:${window.innerHeight-rect.top+pad+gap}px;top:auto;`;
+    else if(step.pos==='below'&&vis) bPos=`top:${rect.bottom+pad+gap}px;bottom:auto;`;
     else                             bPos=`top:50%;bottom:auto;transform:translateY(-50%);`;
     bub.className='tutorial-bubble '+(step.pos==='above'?'arrow-down':'arrow-up');
     bub.style.cssText=`display:block;width:${bw}px;left:${bLeft}px;${bPos}`;
