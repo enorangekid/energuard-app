@@ -303,8 +303,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .notice-empty span{font-size:13px;}
 
 /* ══ 네비 공지 배지 ══ */
-.nav-badge{position:absolute;top:6px;right:calc(50% - 18px);width:8px;height:8px;border-radius:50%;background:var(--accent);border:2px solid white;display:none;}
-.nav-badge.show{display:block;}
 
 /* ══ 발송 완료 모달 ══ */
 #sendCompleteModal{position:fixed;inset:0;z-index:250;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px;}
@@ -523,7 +521,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 <!-- 하단 네비 -->
 <nav class="bottom-nav">
   <div id="navIndicator" class="nav-indicator"></div>
-  <button class="nav-item active" id="nav-home" onclick="showPage('home')" style="position:relative;"><i class="fa-solid fa-house"></i><span>홈</span><div class="nav-badge" id="navNoticeBadge"></div></button>
+  <button class="nav-item active" id="nav-home" onclick="showPage('home')"><i class="fa-solid fa-house"></i><span>홈</span></button>
   <button class="nav-item" id="nav-catalog" onclick="showPage('catalog')"><i class="fa-solid fa-box-open"></i><span>제품</span></button>
   <button class="nav-item" id="nav-estimate" onclick="showPage('estimate')"><i class="fa-solid fa-file-invoice"></i><span>견적</span></button>
   <button class="nav-item" id="nav-company" onclick="showPage('company')"><i class="fa-solid fa-building"></i><span>회사소개</span></button>
@@ -716,11 +714,9 @@ async function loadNotices() {
 
 function _updateNoticeBanner() {
   const banner = document.getElementById('noticeBanner');
-  const badge  = document.getElementById('navNoticeBadge');
 
   if (!_notices.length) {
     banner.classList.remove('show');
-    badge.classList.remove('show');
     return;
   }
 
@@ -730,7 +726,6 @@ function _updateNoticeBanner() {
   const lastSeen        = localStorage.getItem('energuard_last_seen_notice');
   const hasUnseen       = latestRegular && String(latestRegular.id) !== lastSeen;
 
-  // 안 읽은 일반 공지가 있으면 그것을, 없으면 중요공지(또는 최신공지)를 배너에
   const bannerNotice = hasUnseen ? latestRegular : (importantNotice || _notices[0]);
 
   document.getElementById('noticeBannerText').textContent = bannerNotice.title;
@@ -738,10 +733,8 @@ function _updateNoticeBanner() {
 
   const dot = document.getElementById('bannerNewDot');
   if (hasUnseen) {
-    badge.classList.add('show');
     if (dot) dot.classList.add('show');
   } else {
-    badge.classList.remove('show');
     if (dot) dot.classList.remove('show');
   }
 }
@@ -760,7 +753,6 @@ function openNoticeModal() {
   }
 
   // 배너를 즉시 중요공지로 복귀
-  document.getElementById('navNoticeBadge').classList.remove('show');
   const dot = document.getElementById('bannerNewDot');
   if (dot) dot.classList.remove('show');
   const importantNotice = _notices.find(n => n.is_important);
