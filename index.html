@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -295,6 +296,25 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 /* ══ 네비 공지 배지 ══ */
 .nav-badge{position:absolute;top:6px;right:calc(50% - 18px);width:8px;height:8px;border-radius:50%;background:var(--accent);border:2px solid white;display:none;}
 .nav-badge.show{display:block;}
+
+/* ══ 발송 완료 모달 ══ */
+#sendCompleteModal{position:fixed;inset:0;z-index:250;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px;}
+#sendCompleteModal.open{display:flex;animation:fadeIn .25s ease;}
+.send-complete-card{background:white;border-radius:24px;width:100%;max-width:420px;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.send-complete-capture{padding:28px 24px 20px;text-align:center;}
+.send-complete-icon{width:72px;height:72px;border-radius:50%;background:#dcfce7;color:#16a34a;font-size:32px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+.send-complete-title{font-size:20px;font-weight:800;color:var(--text);margin-bottom:20px;}
+.send-complete-summary{background:#f8f9fb;border-radius:14px;padding:16px;text-align:left;border:1px solid var(--border);}
+.send-complete-row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border);gap:12px;}
+.send-complete-row:last-child{border-bottom:none;}
+.send-complete-label{color:var(--text-muted);font-weight:500;flex-shrink:0;font-size:12px;width:64px;}
+.send-complete-value{font-weight:600;color:var(--text);text-align:right;word-break:break-all;font-size:12px;}
+.send-complete-btns{display:flex;flex-direction:column;gap:10px;padding:0 24px 24px;}
+.snd-btn{width:100%;padding:14px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.snd-btn:active{transform:scale(.97);}
+.snd-btn-share{background:var(--primary);color:white;}
+.snd-btn-save{background:#f1f5fb;color:var(--primary);border:1.5px solid var(--border)!important;}
+.snd-btn-close{background:#f1f5fb;color:var(--text-sub);}
 </style>
 </head>
 <body>
@@ -541,6 +561,22 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 </div>
 
 <div id="toast"></div>
+
+<!-- 발송 완료 모달 -->
+<div id="sendCompleteModal">
+  <div class="send-complete-card">
+    <div class="send-complete-capture" id="sendCompleteCapture">
+      <div class="send-complete-icon"><i class="fa-solid fa-circle-check"></i></div>
+      <div class="send-complete-title">견적이 전송되었습니다</div>
+      <div class="send-complete-summary" id="sendCompleteSummary"></div>
+    </div>
+    <div class="send-complete-btns">
+      <button class="snd-btn snd-btn-share" onclick="shareEstimate()"><i class="fa-solid fa-share-nodes"></i> 공유하기</button>
+      <button class="snd-btn snd-btn-save" onclick="saveEstimateImage()"><i class="fa-solid fa-image"></i> 이미지 저장</button>
+      <button class="snd-btn snd-btn-close" onclick="closeSendComplete()"><i class="fa-solid fa-xmark"></i> 닫기</button>
+    </div>
+  </div>
+</div>
 
 <!-- 견적 확인 모달 -->
 <div class="modal-overlay" id="estimateConfirmModal" onclick="closeEstimateConfirm(event)">
@@ -1144,7 +1180,8 @@ async function submitEstimate(){
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 제출 중...';
   btn.disabled = true;
 
-  const now = new Date().toLocaleString('ko-KR');
+  const _d=new Date();
+  const now=`${_d.getFullYear()}.${String(_d.getMonth()+1).padStart(2,'0')}.${String(_d.getDate()).padStart(2,'0')} ${String(_d.getHours()).padStart(2,'0')}:${String(_d.getMinutes()).padStart(2,'0')}`;
 
   try {
     await sb.from('estimate_requests').insert([{
@@ -1161,8 +1198,51 @@ async function submitEstimate(){
   } catch(e) { console.log('이메일발송:', e); }
 
   document.getElementById('estimateForm').style.display = 'none';
-  document.getElementById('submitSuccess').style.display = 'block';
+  openSendCompleteModal({product, areaFull, thickFull, memo, time: now});
 }
+let _lastEstimateData={};
+function openSendCompleteModal(data){
+  _lastEstimateData=data;
+  const rows=[
+    ['제품명',   data.product],
+    ['시공 면적', data.areaFull  || '-'],
+    ['두께',     data.thickFull || '-'],
+    ['요청사항', data.memo      || '-'],
+    ['발송일시', data.time],
+  ];
+  document.getElementById('sendCompleteSummary').innerHTML=rows.map(([l,v])=>
+    `<div class="send-complete-row"><span class="send-complete-label">${l}</span><span class="send-complete-value">${v}</span></div>`
+  ).join('');
+  document.getElementById('sendCompleteModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeSendComplete(){
+  document.getElementById('sendCompleteModal').classList.remove('open');
+  document.body.style.overflow='';
+  resetEstimate();
+  showPage('home');
+}
+function shareEstimate(){
+  const d=_lastEstimateData;
+  const text=`[에너가드컴퍼니 견적 내용]\n제품: ${d.product}\n면적: ${d.areaFull||'-'}\n두께: ${d.thickFull||'-'}\n요청사항: ${d.memo||'-'}\n발송일시: ${d.time}\n문의: 031-511-0377`;
+  if(navigator.share){
+    navigator.share({title:'에너가드컴퍼니 견적',text});
+  } else {
+    navigator.clipboard.writeText(text).then(()=>showToast('클립보드에 복사되었습니다.'));
+  }
+}
+async function saveEstimateImage(){
+  try{
+    const canvas=await html2canvas(document.getElementById('sendCompleteCapture'),{scale:2,backgroundColor:'#ffffff',useCORS:true});
+    const link=document.createElement('a');
+    link.download='에너가드_견적.png';
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+  } catch(e){
+    showToast('이미지 저장에 실패했습니다.');
+  }
+}
+
 function resetEstimate(){
   document.getElementById('estimateForm').style.display='block';
   document.getElementById('submitSuccess').style.display='none';
