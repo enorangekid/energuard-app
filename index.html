@@ -709,6 +709,9 @@ const pages=['home','catalog','estimate','company','wizard'];
 const navOrder={home:0,catalog:1,estimate:2,company:3};
 
 let _currentPage='home';
+let _navStack=['home'];
+let _confirmingExit=false;
+
 function showPage(id,_push=true){
   _currentPage=id;
   pages.forEach(p=>{
@@ -725,40 +728,45 @@ function showPage(id,_push=true){
   }
   if((id==='catalog'||id==='home')&&allProducts.length===0)loadProducts();
   if(id==='estimate') showDraftPopupIfNeeded();
-  if(_push && id!=='home') history.pushState({page:id},'');
+  if(_push && _navStack[_navStack.length-1]!==id) _navStack.push(id);
 }
 
-/* ── 뒤로 가기 처리 ── */
-history.replaceState({page:'home'},'');
-history.pushState({page:'home'},''); // 바닥 더미: 홈에서 back 시 popstate 보장
+/* ── 뒤로 가기 처리 (안정화) ── */
+history.replaceState(null,'');
+history.pushState(null,''); // 가드: popstate 항상 발화 보장
 
-window.addEventListener('popstate',function(e){
-  // 1. 모달 열려있으면 닫기
+window.addEventListener('popstate',function(){
+  if(_confirmingExit) return; // 종료 확정 중 → 재삽입 없이 자연 종료
+
+  // 항상 가드 재삽입 → 다음 back도 반드시 popstate 발화
+  history.pushState(null,'');
+
+  // 1. 공지 모달
+  const noticeModal=document.getElementById('noticeModal');
+  if(noticeModal&&noticeModal.classList.contains('open')){
+    noticeModal.classList.remove('open'); document.body.style.overflow=''; return;
+  }
+  // 2. 견적 확인 모달
+  const confirmModal=document.getElementById('estimateConfirmModal');
+  if(confirmModal&&confirmModal.classList.contains('open')){
+    confirmModal.classList.remove('open'); document.body.style.overflow=''; return;
+  }
+  // 3. 제품 모달
   if(document.getElementById('productModal').classList.contains('open')){
-    closeModalDirect();
-    history.pushState({page:_currentPage},'');
-    return;
+    closeModalDirect(); return;
   }
-  // 2. 튜토리얼 진행 중이면 종료
+  // 4. 튜토리얼
   if(document.getElementById('tutorialOverlay').classList.contains('active')){
-    endTutorial();
-    history.pushState({page:_currentPage},'');
+    endTutorial(); return;
+  }
+  // 5. 이전 탭으로
+  if(_navStack.length>1){
+    _navStack.pop();
+    showPage(_navStack[_navStack.length-1],false);
     return;
   }
-  // 3. 비홈 탭 상태로 이동 (뒤로)
-  const p=e.state&&e.state.page;
-  if(p&&p!=='home'){
-    showPage(p,false);
-    return;
-  }
-  // 4. 홈으로 돌아오는 중 (현재 비홈)
-  if(_currentPage!=='home'){
-    showPage('home',false);
-    return;
-  }
-  // 5. 이미 홈 → 종료 확인
+  // 6. 홈 → 종료 확인
   showExitConfirm();
-  history.pushState({page:'home'},'');
 });
 
 function showExitConfirm(){
@@ -769,7 +777,8 @@ function hideExitConfirm(){
 }
 function confirmExit(){
   hideExitConfirm();
-  window.history.go(-1);
+  _confirmingExit=true;
+  history.back(); // 가드 제거 후 자연 종료
 }
 
 /* ── 위자드 postMessage 수신 ── */
@@ -852,7 +861,6 @@ function openNoticeModal() {
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
   renderNoticeList();
-  history.pushState({ noticeModal: true }, '');
 
   // 일반 공지 중 최신 것을 읽음 처리
   const latestRegular = _notices.filter(n => !n.is_important)[0];
@@ -1091,8 +1099,6 @@ async function openProduct(id){
   document.getElementById('modalSubSubTabs').style.display='none';
   document.getElementById('productModal').classList.add('open');
   document.body.style.overflow='hidden';
-  // 뒤로가기로 모달 닫힘 처리
-  history.pushState({modal: true}, '');
 
   // 가격 데이터 로드
   try {
@@ -1223,22 +1229,6 @@ function goEstimateFromModal(){
   showPage('estimate');
 }
 
-// 뒤로가기 이벤트 처리
-window.addEventListener('popstate', function(e) {
-  const modal = document.getElementById('productModal');
-  const noticeModal = document.getElementById('noticeModal');
-  const confirmModal = document.getElementById('estimateConfirmModal');
-  if(noticeModal.classList.contains('open')) {
-    noticeModal.classList.remove('open');
-    document.body.style.overflow = '';
-  } else if(confirmModal.classList.contains('open')) {
-    confirmModal.classList.remove('open');
-    document.body.style.overflow = '';
-  } else if(modal.classList.contains('open')) {
-    modal.classList.remove('open');
-    document.body.style.overflow='';
-  }
-});
 
 function checkEstimate(){
   const name    = document.getElementById('estName').value.trim();
