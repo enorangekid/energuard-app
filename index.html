@@ -722,21 +722,22 @@ function showPage(id,push=true){
 
 /* ── 뒤로 가기 ── */
 window.addEventListener('popstate',function(){
+  // 1. 제품 모달
+  if(document.getElementById('productModal').classList.contains('open')){
+    closeModalDirect(); return;
+  }
+  // 2. 공지 모달
   const noticeModal=document.getElementById('noticeModal');
   if(noticeModal&&noticeModal.classList.contains('open')){
     noticeModal.classList.remove('open'); document.body.style.overflow=''; return;
   }
-  const confirmModal=document.getElementById('estimateConfirmModal');
-  if(confirmModal&&confirmModal.classList.contains('open')){
-    confirmModal.classList.remove('open'); document.body.style.overflow=''; return;
-  }
-  if(document.getElementById('productModal').classList.contains('open')){
-    closeModalDirect(); return;
-  }
+  // 3. 튜토리얼
   if(document.getElementById('tutorialOverlay').classList.contains('active')){
     endTutorial(); return;
   }
+  // 4. 비홈 탭 → 홈
   if(_currentPage!=='home') showPage('home',false);
+  // 5. 홈 → 자연 종료 (아무것도 안 함)
 });
 
 /* ── 위자드 postMessage 수신 ── */
@@ -1057,6 +1058,7 @@ async function openProduct(id){
   document.getElementById('modalSubSubTabs').style.display='none';
   document.getElementById('productModal').classList.add('open');
   document.body.style.overflow='hidden';
+  history.pushState({modal:'product'},'');
 
   // 가격 데이터 로드
   try {
