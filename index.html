@@ -714,9 +714,16 @@ function showPage(id){
   if(id==='estimate') showDraftPopupIfNeeded();
 }
 
-/* ── 뒤로 가기 차단 ── */
-for(let i=0;i<50;i++) history.pushState(null,'');
-window.addEventListener('popstate',function(){ history.pushState(null,''); });
+/* ── 뒤로 가기 (두 번 누르면 종료) ── */
+let _backPressedOnce=false;
+window.addEventListener('popstate',function(){
+  history.pushState(null,'');
+  if(_backPressedOnce) return;
+  _backPressedOnce=true;
+  showToast('한 번 더 누르면 앱이 종료됩니다.');
+  setTimeout(()=>{ _backPressedOnce=false; },2000);
+});
+history.pushState(null,'');
 
 /* ── 위자드 postMessage 수신 ── */
 window.addEventListener('message', function(e){
