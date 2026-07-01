@@ -590,6 +590,18 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 <div id="toast"></div>
 
+<!-- 종료 확인 팝업 -->
+<div id="exitConfirm" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:white;border-radius:20px;padding:32px 24px 24px;width:100%;max-width:300px;text-align:center;">
+    <div style="font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:8px;">앱을 종료하시겠습니까?</div>
+    <div style="font-size:13px;color:#888;line-height:1.6;margin-bottom:24px;">에너가드컴퍼니 앱을 닫습니다</div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="hideExitConfirm()" style="flex:1;padding:13px;border-radius:12px;background:#f1f3f5;border:none;font-family:inherit;font-size:14px;font-weight:600;color:#555;cursor:pointer;">취소</button>
+      <button onclick="confirmExit()" style="flex:1;padding:13px;border-radius:12px;background:var(--primary);border:none;font-family:inherit;font-size:14px;font-weight:600;color:white;cursor:pointer;">종료</button>
+    </div>
+  </div>
+</div>
+
 <!-- 튜토리얼 오버레이 -->
 <div id="tutorialOverlay">
   <div id="tutorialSpotlight"></div>
@@ -696,7 +708,9 @@ let allProducts=[],currentCatalogCat='전체',currentHomeCat='전체',currentPro
 const pages=['home','catalog','estimate','company','wizard'];
 const navOrder={home:0,catalog:1,estimate:2,company:3};
 
-function showPage(id){
+let _currentPage='home';
+function showPage(id,_push=true){
+  _currentPage=id;
   pages.forEach(p=>{
     document.getElementById('page-'+p).classList.toggle('active',p===id);
     const navEl=document.getElementById('nav-'+p);
@@ -706,12 +720,56 @@ function showPage(id){
     document.getElementById('navIndicator').style.transform=`translateX(${navOrder[id]*100}%)`;
   window.scrollTo(0,0);
   if(id==='wizard'){
-    // iframe 로드 보장
     const frame = document.getElementById('wizardFrame');
     if(frame && !frame.dataset.loaded){ frame.dataset.loaded='1'; }
   }
   if((id==='catalog'||id==='home')&&allProducts.length===0)loadProducts();
   if(id==='estimate') showDraftPopupIfNeeded();
+  if(_push && id!=='home') history.pushState({page:id},'');
+}
+
+/* ── 뒤로 가기 처리 ── */
+history.replaceState({page:'home'},'');
+history.pushState({page:'home'},''); // 바닥 더미: 홈에서 back 시 popstate 보장
+
+window.addEventListener('popstate',function(e){
+  // 1. 모달 열려있으면 닫기
+  if(document.getElementById('productModal').classList.contains('open')){
+    closeModalDirect();
+    history.pushState({page:_currentPage},'');
+    return;
+  }
+  // 2. 튜토리얼 진행 중이면 종료
+  if(document.getElementById('tutorialOverlay').classList.contains('active')){
+    endTutorial();
+    history.pushState({page:_currentPage},'');
+    return;
+  }
+  // 3. 비홈 탭 상태로 이동 (뒤로)
+  const p=e.state&&e.state.page;
+  if(p&&p!=='home'){
+    showPage(p,false);
+    return;
+  }
+  // 4. 홈으로 돌아오는 중 (현재 비홈)
+  if(_currentPage!=='home'){
+    showPage('home',false);
+    return;
+  }
+  // 5. 이미 홈 → 종료 확인
+  showExitConfirm();
+  history.pushState({page:'home'},'');
+});
+
+function showExitConfirm(){
+  document.getElementById('exitConfirm').style.display='flex';
+}
+function hideExitConfirm(){
+  document.getElementById('exitConfirm').style.display='none';
+}
+function confirmExit(){
+  hideExitConfirm();
+  window.history.go(-1);
 }
 
 /* ── 위자드 postMessage 수신 ── */
