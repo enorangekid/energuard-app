@@ -590,17 +590,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 <div id="toast"></div>
 
-<!-- 종료 확인 팝업 -->
-<div id="exitConfirm" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.55);align-items:center;justify-content:center;padding:20px;">
-  <div style="background:white;border-radius:20px;padding:32px 24px 24px;width:100%;max-width:300px;text-align:center;">
-    <div style="font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:8px;">앱을 종료하시겠습니까?</div>
-    <div style="font-size:13px;color:#888;line-height:1.6;margin-bottom:24px;">에너가드컴퍼니 앱을 닫습니다</div>
-    <div style="display:flex;gap:10px;">
-      <button onclick="hideExitConfirm()" style="flex:1;padding:13px;border-radius:12px;background:#f1f3f5;border:none;font-family:inherit;font-size:14px;font-weight:600;color:#555;cursor:pointer;">취소</button>
-      <button onclick="confirmExit()" style="flex:1;padding:13px;border-radius:12px;background:var(--primary);border:none;font-family:inherit;font-size:14px;font-weight:600;color:white;cursor:pointer;">종료</button>
-    </div>
-  </div>
-</div>
 
 <!-- 튜토리얼 오버레이 -->
 <div id="tutorialOverlay">
@@ -708,12 +697,7 @@ let allProducts=[],currentCatalogCat='전체',currentHomeCat='전체',currentPro
 const pages=['home','catalog','estimate','company','wizard'];
 const navOrder={home:0,catalog:1,estimate:2,company:3};
 
-let _currentPage='home';
-let _navStack=['home'];
-let _confirmingExit=false;
-
-function showPage(id,_push=true){
-  _currentPage=id;
+function showPage(id){
   pages.forEach(p=>{
     document.getElementById('page-'+p).classList.toggle('active',p===id);
     const navEl=document.getElementById('nav-'+p);
@@ -728,58 +712,11 @@ function showPage(id,_push=true){
   }
   if((id==='catalog'||id==='home')&&allProducts.length===0)loadProducts();
   if(id==='estimate') showDraftPopupIfNeeded();
-  if(_push && _navStack[_navStack.length-1]!==id) _navStack.push(id);
 }
 
-/* ── 뒤로 가기 처리 (안정화) ── */
-history.replaceState(null,'');
-history.pushState(null,''); // 가드: popstate 항상 발화 보장
-
-window.addEventListener('popstate',function(){
-  if(_confirmingExit) return; // 종료 확정 중 → 재삽입 없이 자연 종료
-
-  // 항상 가드 재삽입 → 다음 back도 반드시 popstate 발화
-  history.pushState(null,'');
-
-  // 1. 공지 모달
-  const noticeModal=document.getElementById('noticeModal');
-  if(noticeModal&&noticeModal.classList.contains('open')){
-    noticeModal.classList.remove('open'); document.body.style.overflow=''; return;
-  }
-  // 2. 견적 확인 모달
-  const confirmModal=document.getElementById('estimateConfirmModal');
-  if(confirmModal&&confirmModal.classList.contains('open')){
-    confirmModal.classList.remove('open'); document.body.style.overflow=''; return;
-  }
-  // 3. 제품 모달
-  if(document.getElementById('productModal').classList.contains('open')){
-    closeModalDirect(); return;
-  }
-  // 4. 튜토리얼
-  if(document.getElementById('tutorialOverlay').classList.contains('active')){
-    endTutorial(); return;
-  }
-  // 5. 이전 탭으로
-  if(_navStack.length>1){
-    _navStack.pop();
-    showPage(_navStack[_navStack.length-1],false);
-    return;
-  }
-  // 6. 홈 → 종료 확인
-  showExitConfirm();
-});
-
-function showExitConfirm(){
-  document.getElementById('exitConfirm').style.display='flex';
-}
-function hideExitConfirm(){
-  document.getElementById('exitConfirm').style.display='none';
-}
-function confirmExit(){
-  hideExitConfirm();
-  _confirmingExit=true;
-  history.back(); // 가드 제거 후 자연 종료
-}
+/* ── 뒤로 가기 차단 ── */
+for(let i=0;i<50;i++) history.pushState(null,'');
+window.addEventListener('popstate',function(){ history.pushState(null,''); });
 
 /* ── 위자드 postMessage 수신 ── */
 window.addEventListener('message', function(e){
