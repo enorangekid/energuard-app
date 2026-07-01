@@ -225,9 +225,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 #tutorialSpotlight{position:absolute;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,0.78);pointer-events:none;transition:left .35s ease,top .35s ease,width .35s ease,height .35s ease;}
 .tutorial-bubble{position:absolute;background:none;padding:0;box-shadow:none;width:240px;pointer-events:none;}
 .t-bubble-title{font-size:17px;font-weight:800;color:#e85d2f;margin-bottom:6px;letter-spacing:-.3px;text-shadow:0 1px 4px rgba(0,0,0,.4);}
-.t-bubble-desc{font-size:13px;color:rgba(255,255,255,.78);line-height:1.6;white-space:pre-line;text-shadow:0 1px 3px rgba(0,0,0,.3);}
+.t-bubble-desc{font-size:13px;color:rgba(255,255,255,.78);line-height:1.6;white-space:pre-line;text-shadow:0 1px 4px rgba(0,0,0,.8);}
 .t-next-btn{background:none;border:none;color:#e85d2f;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;padding:10px 0 0;margin:0;pointer-events:auto;letter-spacing:-.1px;display:block;}
-#tutorialCenterCard .t-next-btn{background:white;color:var(--primary);display:inline-block;width:auto;padding:13px 36px;border-radius:24px;margin-top:24px;font-size:15px;font-weight:800;letter-spacing:-.3px;}
+#tutorialCenterCard .t-next-btn{background:var(--accent);color:white;display:block;width:fit-content;margin:24px auto 0;padding:13px 36px;border-radius:24px;font-size:15px;font-weight:800;letter-spacing:-.3px;}
 #tutorialTopBar{position:absolute;top:16px;left:0;right:0;padding:0 16px;display:flex;align-items:center;}
 #tutorialDots{flex:1;display:flex;justify-content:center;align-items:center;gap:7px;}
 #tutorialSkip{flex-shrink:0;background:none;border:none;color:rgba(255,255,255,.75);font-family:inherit;font-size:13px;font-weight:600;padding:6px 0;cursor:pointer;}
@@ -1292,6 +1292,8 @@ function _setArrow(step,rect,pad,x1,y1){
   } else {
     x2=cx; y2=rect.bottom+pad;
     cpx=(x1+x2)/2-20; cpy=(y1+y2)/2;
+    const W=window.innerWidth;
+    x1=W-x1; x2=W-x2; cpx=W-cpx;
   }
   const aLen=15,aWid=11;
   const dx=x2-cpx,dy=y2-cpy,mag=Math.sqrt(dx*dx+dy*dy)||1;
