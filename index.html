@@ -218,6 +218,15 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 /* ══ 견적 단위 선택 ══ */
 .unit-select{padding:13px 8px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;color:var(--text);background:white;outline:none;transition:border-color .2s;flex-shrink:0;}
 .unit-select:focus{border-color:var(--primary);}
+
+/* ══ 임시저장 팝업 ══ */
+#draftPopup{position:fixed;inset:0;z-index:220;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);display:none;align-items:flex-end;}
+#draftPopup.open{display:flex;animation:fadeIn .2s ease;}
+.draft-sheet{width:100%;background:white;border-radius:20px 20px 0 0;padding:28px 20px 32px;animation:slideUp .3s cubic-bezier(.34,1.2,.64,1);}
+.draft-sheet-icon{width:48px;height:48px;border-radius:14px;background:#e8f0fb;color:var(--primary);font-size:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+.draft-sheet-title{font-size:16px;font-weight:800;color:var(--text);text-align:center;margin-bottom:6px;}
+.draft-sheet-sub{font-size:12px;color:var(--text-sub);text-align:center;margin-bottom:24px;}
+.draft-sheet-btns{display:flex;flex-direction:column;gap:10px;}
 /* ══ 견적 확인 모달 ══ */
 .confirm-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;gap:12px;}
 .confirm-row:last-child{border-bottom:none;}
@@ -562,6 +571,19 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 <div id="toast"></div>
 
+<!-- 임시저장 팝업 -->
+<div id="draftPopup">
+  <div class="draft-sheet">
+    <div class="draft-sheet-icon"><i class="fa-solid fa-floppy-disk"></i></div>
+    <div class="draft-sheet-title">이전에 작성 중인 견적이 있습니다.</div>
+    <div class="draft-sheet-sub">이어서 작성하시겠습니까?</div>
+    <div class="draft-sheet-btns">
+      <button class="submit-btn" style="margin-top:0;" onclick="resumeDraft()"><i class="fa-solid fa-pen-to-square"></i> 이어서 작성</button>
+      <button class="modal-btn modal-btn-secondary" onclick="discardDraft()"><i class="fa-solid fa-trash"></i> 새로 작성</button>
+    </div>
+  </div>
+</div>
+
 <!-- 발송 완료 모달 -->
 <div id="sendCompleteModal">
   <div class="send-complete-card">
@@ -641,6 +663,7 @@ function showPage(id){
     if(frame && !frame.dataset.loaded){ frame.dataset.loaded='1'; }
   }
   if((id==='catalog'||id==='home')&&allProducts.length===0)loadProducts();
+  if(id==='estimate') showDraftPopupIfNeeded();
 }
 
 /* ── 위자드 postMessage 수신 ── */
@@ -1197,9 +1220,63 @@ async function submitEstimate(){
     });
   } catch(e) { console.log('이메일발송:', e); }
 
+  localStorage.removeItem('estimateDraft');
   document.getElementById('estimateForm').style.display = 'none';
   openSendCompleteModal({product, areaFull, thickFull, memo, time: now});
 }
+/* ── 임시저장 ── */
+let _draftHandled=false;
+function saveDraft(){
+  const draft={
+    name:      document.getElementById('estName').value,
+    phone:     document.getElementById('estPhone').value,
+    company:   document.getElementById('estCompany').value,
+    product:   document.getElementById('estProduct').value,
+    area:      document.getElementById('estArea').value,
+    areaUnit:  document.getElementById('estAreaUnit').value,
+    thick:     document.getElementById('estThick').value,
+    thickUnit: document.getElementById('estThickUnit').value,
+    memo:      document.getElementById('estMemo').value,
+  };
+  const hasData=['name','phone','company','product','area','thick','memo'].some(k=>draft[k]&&draft[k].trim());
+  if(hasData) localStorage.setItem('estimateDraft',JSON.stringify(draft));
+}
+function showDraftPopupIfNeeded(){
+  if(_draftHandled) return;
+  const raw=localStorage.getItem('estimateDraft');
+  if(!raw) return;
+  try{
+    const d=JSON.parse(raw);
+    const hasData=['name','phone','company','product','area','thick','memo'].some(k=>d[k]&&d[k].trim());
+    if(!hasData){ localStorage.removeItem('estimateDraft'); return; }
+    document.getElementById('draftPopup').classList.add('open');
+    document.body.style.overflow='hidden';
+  }catch(e){ localStorage.removeItem('estimateDraft'); }
+}
+function resumeDraft(){
+  const raw=localStorage.getItem('estimateDraft');
+  if(!raw) return;
+  const d=JSON.parse(raw);
+  document.getElementById('estName').value     =d.name     ||'';
+  document.getElementById('estPhone').value    =d.phone    ||'';
+  document.getElementById('estCompany').value  =d.company  ||'';
+  document.getElementById('estProduct').value  =d.product  ||'';
+  document.getElementById('estArea').value     =d.area     ||'';
+  document.getElementById('estAreaUnit').value =d.areaUnit ||'평';
+  document.getElementById('estThick').value    =d.thick    ||'';
+  document.getElementById('estThickUnit').value=d.thickUnit||'T';
+  document.getElementById('estMemo').value     =d.memo     ||'';
+  document.getElementById('draftPopup').classList.remove('open');
+  document.body.style.overflow='';
+  _draftHandled=true;
+}
+function discardDraft(){
+  localStorage.removeItem('estimateDraft');
+  document.getElementById('draftPopup').classList.remove('open');
+  document.body.style.overflow='';
+  _draftHandled=true;
+}
+
 let _lastEstimateData={};
 function openSendCompleteModal(data){
   _lastEstimateData=data;
@@ -1263,7 +1340,16 @@ function showToast(msg){
   el.textContent=msg;el.classList.add('show');
   clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2500);
 }
-document.addEventListener('DOMContentLoaded',()=>{loadProducts();loadNotices();});
+document.addEventListener('DOMContentLoaded',()=>{
+  loadProducts();
+  loadNotices();
+  ['estName','estPhone','estCompany','estArea','estThick','estMemo'].forEach(id=>{
+    document.getElementById(id).addEventListener('input',saveDraft);
+  });
+  ['estProduct','estAreaUnit','estThickUnit'].forEach(id=>{
+    document.getElementById(id).addEventListener('change',saveDraft);
+  });
+});
 </script>
 </body>
 </html>
