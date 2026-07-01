@@ -228,11 +228,11 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .tutorial-bubble.arrow-up::after{content:'';position:absolute;top:-10px;left:50%;transform:translateX(-50%);border:10px solid transparent;border-bottom-color:white;border-top-width:0;}
 .t-bubble-title{font-size:16px;font-weight:800;color:var(--text);margin-bottom:5px;letter-spacing:-.3px;}
 .t-bubble-desc{font-size:13px;color:var(--text-sub);line-height:1.6;white-space:pre-line;}
-#tutorialSkip{position:absolute;top:20px;right:20px;background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.45);color:white;font-family:inherit;font-size:15px;font-weight:600;padding:12px 22px;border-radius:24px;cursor:pointer;}
-#tutorialDots{position:absolute;bottom:108px;left:50%;transform:translateX(-50%);display:flex;gap:10px;align-items:center;}
-.t-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
-.t-dot.active{background:white;width:28px;border-radius:5px;}
-#tutorialNextBtn{position:absolute;bottom:28px;left:24px;right:24px;background:white;color:var(--primary);font-family:inherit;font-size:18px;font-weight:800;padding:20px;border-radius:16px;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.2);letter-spacing:-.3px;}
+.t-next-btn{width:100%;padding:11px;border-radius:10px;background:var(--primary);color:white;font-family:inherit;font-size:14px;font-weight:700;border:none;cursor:pointer;margin-top:12px;pointer-events:auto;letter-spacing:-.2px;}
+#tutorialSkip{position:absolute;top:16px;right:16px;background:none;border:none;color:rgba(255,255,255,.75);font-family:inherit;font-size:13px;font-weight:600;padding:8px 12px;cursor:pointer;}
+#tutorialDots{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;gap:10px;align-items:center;}
+.t-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.t-dot.active{background:white;width:24px;border-radius:5px;}
 #tutorialCenterCard{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border-radius:24px;padding:36px 28px;text-align:center;width:calc(100% - 48px);max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
 .t-center-title{font-size:22px;font-weight:900;color:var(--text);margin-bottom:10px;letter-spacing:-.4px;}
 .t-center-desc{font-size:15px;color:var(--text-sub);line-height:1.7;}
@@ -593,10 +593,12 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   <div id="tutorialBubble" class="tutorial-bubble">
     <div id="tBubbleTitle" class="t-bubble-title"></div>
     <div id="tBubbleDesc" class="t-bubble-desc"></div>
+    <button class="t-next-btn" onclick="nextTutorial()">다음</button>
   </div>
   <div id="tutorialCenterCard" style="display:none;">
     <div class="t-center-title">준비 완료!</div>
     <div class="t-center-desc">에너가드컴퍼니 앱을<br>시작해 보세요</div>
+    <button class="t-next-btn" onclick="endTutorial()">시작하기</button>
   </div>
   <button id="tutorialSkip" onclick="endTutorial()">건너뛰기</button>
   <div id="tutorialDots">
@@ -606,7 +608,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
     <span class="t-dot"></span>
     <span class="t-dot"></span>
   </div>
-  <button id="tutorialNextBtn" onclick="nextTutorial()">다음</button>
 </div>
 
 <!-- 임시저장 팝업 -->
@@ -1277,7 +1278,6 @@ function _showTStep(idx){
   const spot=document.getElementById('tutorialSpotlight');
   const bub=document.getElementById('tutorialBubble');
   const card=document.getElementById('tutorialCenterCard');
-  const nextBtn=document.getElementById('tutorialNextBtn');
   const skipBtn=document.getElementById('tutorialSkip');
   document.querySelectorAll('.t-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
   if(!step.sel){
@@ -1286,12 +1286,10 @@ function _showTStep(idx){
     bub.style.display='none';
     card.style.display='block';
     skipBtn.style.display='none';
-    nextBtn.textContent='시작하기';
     return;
   }
   card.style.display='none';
   skipBtn.style.display='block';
-  nextBtn.textContent='다음';
   document.getElementById('tBubbleTitle').textContent=step.title;
   document.getElementById('tBubbleDesc').textContent=step.desc;
   window.scrollTo(0,0);
