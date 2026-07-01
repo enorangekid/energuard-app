@@ -227,14 +227,14 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .t-bubble-title{font-size:17px;font-weight:800;color:#e85d2f;margin-bottom:6px;letter-spacing:-.3px;text-shadow:0 1px 4px rgba(0,0,0,.4);}
 .t-bubble-desc{font-size:13px;color:rgba(255,255,255,.78);line-height:1.6;white-space:pre-line;text-shadow:0 1px 4px rgba(0,0,0,.8);}
 .t-next-btn{background:none;border:none;color:#e85d2f;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;padding:10px 0 0;margin:0;pointer-events:auto;letter-spacing:-.1px;display:block;}
-#tutorialCenterCard .t-next-btn{background:var(--accent);color:white;display:block;width:fit-content;margin:24px auto 0;padding:13px 36px;border-radius:24px;font-size:15px;font-weight:800;letter-spacing:-.3px;}
+#tutorialCenterCard .t-next-btn{background:none;color:white;display:block;width:fit-content;margin:28px auto 0;padding:0;font-size:17px;font-weight:700;letter-spacing:-.2px;}
 #tutorialTopBar{position:absolute;top:16px;left:0;right:0;padding:0 16px;display:flex;align-items:center;}
 #tutorialDots{flex:1;display:flex;justify-content:center;align-items:center;gap:7px;}
-#tutorialSkip{flex-shrink:0;background:none;border:none;color:rgba(255,255,255,.75);font-family:inherit;font-size:13px;font-weight:600;padding:6px 0;cursor:pointer;}
+#tutorialSkip{position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.75);font-family:inherit;font-size:13px;font-weight:600;padding:6px 0;cursor:pointer;}
 .t-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
 .t-dot.active{background:white;width:24px;border-radius:5px;}
 #tutorialCenterCard{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:none;border-radius:0;padding:0;text-align:center;width:calc(100% - 48px);max-width:340px;box-shadow:none;}
-.t-center-title{font-size:24px;font-weight:900;color:white;margin-bottom:10px;letter-spacing:-.4px;text-shadow:0 1px 4px rgba(0,0,0,.4);}
+.t-center-title{font-size:24px;font-weight:900;color:var(--accent);margin-bottom:10px;letter-spacing:-.4px;text-shadow:0 1px 4px rgba(0,0,0,.4);}
 .t-center-desc{font-size:15px;color:rgba(255,255,255,.78);line-height:1.7;text-shadow:0 1px 3px rgba(0,0,0,.3);}
 
 /* ══ 임시저장 팝업 ══ */
@@ -602,7 +602,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   <div id="tutorialCenterCard" style="display:none;">
     <div class="t-center-title">준비 완료!</div>
     <div class="t-center-desc">에너가드컴퍼니 앱을<br>시작해 보세요</div>
-    <button class="t-next-btn" onclick="endTutorial()">시작하기</button>
+    <button class="t-next-btn" onclick="endTutorial()">시작하기 →</button>
   </div>
   <div id="tutorialTopBar">
     <div id="tutorialDots">
@@ -1287,10 +1287,10 @@ function _setArrow(step,rect,pad,x1,y1){
   const cx=rect.left+rect.width/2;
   let x2,y2,cpx,cpy;
   if(step.pos==='above'){
-    x2=cx; y2=rect.top-pad;
+    x2=cx; y2=rect.top-pad-10;
     cpx=(x1+x2)/2+20; cpy=(y1+y2)/2;
   } else {
-    x2=cx; y2=rect.bottom+pad;
+    x2=cx; y2=rect.bottom+pad+10;
     cpx=(x1+x2)/2-20; cpy=(y1+y2)/2;
     const W=window.innerWidth;
     x1=W-x1; x2=W-x2; cpx=W-cpx;
