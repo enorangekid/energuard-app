@@ -222,7 +222,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 /* ══ 튜토리얼 ══ */
 #tutorialOverlay{position:fixed;inset:0;z-index:9500;display:none;}
 #tutorialOverlay.active{display:block;animation:fadeIn .3s ease;}
-#tutorialSpotlight{position:absolute;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,0.78);pointer-events:none;transition:left .35s ease,top .35s ease,width .35s ease,height .35s ease;}
+#tutorialSpotlight{position:absolute;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,0.78);pointer-events:auto;cursor:pointer;transition:left .35s ease,top .35s ease,width .35s ease,height .35s ease;}
 .tutorial-bubble{position:absolute;background:none;padding:0;box-shadow:none;width:240px;pointer-events:none;}
 .t-bubble-title{font-size:17px;font-weight:800;color:#e85d2f;margin-bottom:6px;letter-spacing:-.3px;text-shadow:0 1px 4px rgba(0,0,0,.4);}
 .t-bubble-desc{font-size:13px;color:rgba(255,255,255,.78);line-height:1.6;white-space:pre-line;text-shadow:0 1px 4px rgba(0,0,0,.8);}
@@ -593,7 +593,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 <!-- 튜토리얼 오버레이 -->
 <div id="tutorialOverlay">
-  <div id="tutorialSpotlight"></div>
+  <div id="tutorialSpotlight" onclick="nextTutorial()"></div>
   <svg id="tutorialArrow" style="display:none;position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;overflow:visible;">
     <path id="tutorialArrowPath" stroke="#e85d2f" stroke-width="3" fill="none" stroke-linecap="round"/>
     <polygon id="tutorialArrowHead" fill="#e85d2f"/>
