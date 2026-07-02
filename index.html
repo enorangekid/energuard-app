@@ -366,16 +366,15 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
   <a href="tel:010-5163-8454" class="header-call-btn"><i class="fa-solid fa-phone"></i></a>
 </header>
 
-<!-- 공지 배너 -->
-<div id="noticeBanner" onclick="openNoticeModal()">
-  <div class="notice-banner-icon"><i class="fa-solid fa-bell"></i></div>
-  <div class="notice-banner-text" id="noticeBannerText">공지사항</div>
-  <div class="banner-new-dot" id="bannerNewDot"></div>
-  <div class="notice-banner-arrow"><i class="fa-solid fa-chevron-right"></i></div>
-</div>
-
 <!-- 홈 -->
 <div id="page-home" class="page active">
+  <!-- 공지 배너 -->
+  <div id="noticeBanner" onclick="openNoticeModal()">
+    <div class="notice-banner-icon"><i class="fa-solid fa-bell"></i></div>
+    <div class="notice-banner-text" id="noticeBannerText">공지사항</div>
+    <div class="banner-new-dot" id="bannerNewDot"></div>
+    <div class="notice-banner-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+  </div>
   <div class="home-hero">
     <div class="hero-badge"><i class="fa-solid fa-certificate"></i> KS 인증 친환경 단열재 전문</div>
     <h1 class="hero-title">최고의 단열 파트너<br><span>에너가드컴퍼니</span></h1>
@@ -714,22 +713,25 @@ function showPage(id,push=true){
   }
   if((id==='catalog'||id==='home')&&allProducts.length===0)loadProducts();
   if(id==='estimate') showDraftPopupIfNeeded();
+  if(id==='home') _updateNoticeBanner();
   if(push){
     if(id!=='home') history.pushState({page:id},'','#'+id);
-    else history.replaceState({page:'home'},'',location.pathname);
+    else if(!window._noticeModalHistoryPushed) history.replaceState({page:'home'},'',location.pathname);
   }
 }
 
 /* ── 뒤로 가기 ── */
 window.addEventListener('popstate',function(){
-  // 1. 제품 모달
-  if(document.getElementById('productModal').classList.contains('open')){
-    closeModalDirect(); return;
-  }
-  // 2. 공지 모달
+  // 1. 공지 모달
   const noticeModal=document.getElementById('noticeModal');
   if(noticeModal&&noticeModal.classList.contains('open')){
-    noticeModal.classList.remove('open'); document.body.style.overflow=''; return;
+    closeNoticeModalDirect();
+    window._noticeModalHistoryPushed=false;
+    return;
+  }
+  // 2. 제품 모달
+  if(document.getElementById('productModal').classList.contains('open')){
+    closeModalDirect(); return;
   }
   // 3. 튜토리얼
   if(document.getElementById('tutorialOverlay').classList.contains('active')){
@@ -785,7 +787,7 @@ async function loadNotices() {
     _notices = (!error && data) ? data : [];
   } catch(e) { _notices = []; }
 
-  _updateNoticeBanner();
+  if (_currentPage === 'home') _updateNoticeBanner();
 }
 
 function _updateNoticeBanner() {
@@ -816,6 +818,11 @@ function _updateNoticeBanner() {
 }
 
 function openNoticeModal() {
+  if (!window._noticeModalHistoryPushed) {
+    history.pushState({ page: 'home' }, '', location.pathname);
+    history.pushState({ modal: 'notice' }, '', location.href);
+    window._noticeModalHistoryPushed = true;
+  }
   const modal = document.getElementById('noticeModal');
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -863,7 +870,7 @@ function closeNoticeModal(e) {
 function closeNoticeModalDirect() {
   document.getElementById('noticeModal').classList.remove('open');
   document.body.style.overflow = '';
-  if (history.state && history.state.noticeModal) history.back();
+  window._noticeModalHistoryPushed = false;
 }
 
 async function loadProducts(){
