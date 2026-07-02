@@ -26,8 +26,8 @@
   --shadow-sm:0 2px 8px rgba(15,76,129,0.08);--shadow-md:0 8px 24px rgba(15,76,129,0.12);--shadow-lg:0 16px 48px rgba(15,76,129,0.16);
   --radius:16px;--radius-sm:10px;
 }
-html{scroll-behavior:smooth;overscroll-behavior-y:none;}
-body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;overscroll-behavior-y:none;}
+html{height:100%;overflow:hidden;scroll-behavior:smooth;overscroll-behavior-y:none;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);height:100%;overflow:hidden;overflow-x:hidden;-webkit-font-smoothing:antialiased;overscroll-behavior-y:none;}
 
 /* ══ 스플래시 ══ */
 #splash{
@@ -46,12 +46,12 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 
 /* ══ 공통 ══ */
 .hidden{display:none!important;}
-.page{display:none;min-height:100vh;padding-bottom:80px;}
+.page{display:none;position:fixed;top:58px;left:0;right:0;bottom:calc(68px + env(safe-area-inset-bottom));overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:24px;}
 .page.active{display:block;animation:fadeUp .3s ease;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
 
 /* ══ 헤더 ══ */
-.app-header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 20px;height:58px;display:flex;align-items:center;justify-content:space-between;}
+.app-header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 20px;height:58px;display:flex;align-items:center;justify-content:space-between;}
 .header-logo{display:flex;align-items:center;gap:10px;text-decoration:none;cursor:pointer;}
 .header-logo-icon{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;color:white;font-size:16px;}
 .header-logo-text{font-size:15px;font-weight:700;color:var(--text);line-height:1.2;}
