@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://enorangekid.github.io/energuard-app/sitemap.xml
