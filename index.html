@@ -982,10 +982,9 @@ function closeNoticeModalDirect() {
 async function loadProducts(){
   try{
     const{data,error}=await sb.from('app_products').select('*').order('sort_order');
-    if(error){console.error('[loadProducts] supabase error:',error);alert('상품 로드 실패(error): '+JSON.stringify(error));}
-    else if(!data||!data.length){alert('상품 로드 결과 0건 (data: '+JSON.stringify(data)+')');}
+    if(error)console.error('[loadProducts] supabase error:',error);
     allProducts=(!error&&data&&data.length)?data:getDummyProducts();
-  }catch(e){console.error('[loadProducts] fetch failed:',e);alert('상품 로드 실패(exception): '+(e&&e.message?e.message:String(e)));allProducts=getDummyProducts();}
+  }catch(e){console.error('[loadProducts] fetch failed:',e);allProducts=getDummyProducts();}
   renderHomeProducts('전체');
   renderCatalog();
   renderRecentProducts();
