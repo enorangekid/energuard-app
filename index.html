@@ -1384,12 +1384,20 @@ async function submitEstimate(){
     }]);
   } catch(e) { console.log('견적저장:', e); }
 
+  // 견적을 받는 통로가 메일이라, DB 저장 결과와 관계없이 메일이 실패하면 실패로 알린다.
   try {
     emailjs.init('KMlIlRPftSAeD5lgW');
     await emailjs.send('service_7bnpzpo', 'template_zx8s3lf', {
       name, phone, company, product, area: areaFull, thickness: thickFull, memo, time: now
     });
-  } catch(e) { console.log('이메일발송:', e); }
+  } catch(e) {
+    console.error('이메일발송:', e);
+    saveDraft();
+    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> 견적 요청하기';
+    btn.disabled = false;
+    alert('견적 요청 전송에 실패했습니다.\n작성하신 내용은 그대로 남아 있습니다.\n잠시 후 다시 시도하시거나 010-5163-8454로 전화해 주세요.');
+    return;
+  }
 
   localStorage.removeItem('estimateDraft');
   document.getElementById('estimateForm').style.display = 'none';
